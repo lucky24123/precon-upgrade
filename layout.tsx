@@ -1,0 +1,1 @@
+import "./globals.css"; export const metadata={title:"Precon Upgrade — no AI",description:"Upgrade Commander basati sui dati EDHREC e Scryfall"}; export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="it"><body>{children}</body></html>}
