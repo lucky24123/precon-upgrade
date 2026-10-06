@@ -66,7 +66,6 @@ export default function CreateDeck() {
     <header><div className="brand">PRECON UPGRADE <span>NO AI</span></div><Link href="/">← Torna agli upgrade</Link></header>
     <section className="hero"><h1>Crea una base di mazzo.</h1><p>Scegli i colori, inserisci il comandante e imposta il budget. La lista dovrà essere controllata e personalizzata prima di giocare.</p></section>
     <section className="panel">
-      <p className="notice">Prima versione dell’interfaccia. Richiede il nuovo endpoint /api/build: la sola pagina non genera ancora mazzi.</p>
       <form onSubmit={generate}>
         <fieldset disabled={busy}><legend>Colori del comandante</legend><div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>{colors.map(c => <label key={c.code} style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={selected.includes(c.code)} onChange={() => toggle(c.code)} style={{ width: "auto" }} />{c.name}</label>)}</div><p className="fine">Nessun colore selezionato = incolore. Il server deve verificare la corrispondenza con l’identità del comandante.</p></fieldset>
         <label htmlFor="commander">Comandante — nome ufficiale</label><input id="commander" required value={commander} disabled={busy} onChange={e => { setCommander(e.target.value); setResult(null); }} placeholder="Inserisci il nome del comandante" />
