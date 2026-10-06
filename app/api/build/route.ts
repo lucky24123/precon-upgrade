@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { commanderPage, EdhrecError } from "../../../lib/edhrec";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 type Card = { name:string; oracle_id?:string; type_line:string; oracle_text?:string; color_identity:string[]; legalities:Record<string,string>; prices?:{eur?:string|null}; image_uris?:{normal?:string}; card_faces?:{type_line?:string;oracle_text?:string;image_uris?:{normal?:string}}[] };
@@ -18,10 +19,7 @@ if(commander.legalities?.commander!=="legal")return NextResponse.json({error:"Qu
 const eligible=(commander.type_line.includes("Legendary")&&commander.type_line.includes("Creature"))||/can be your commander/i.test(commander.oracle_text||"");
 if(!eligible)return NextResponse.json({error:"Questa prima versione supporta un solo comandante: creatura leggendaria o carta che dichiara di poter essere comandante."},{status:400});
 const identity=commander.color_identity||[];if(identity.length!==selected.length||identity.some(c=>!selected.includes(c)))return NextResponse.json({error:`I colori selezionati non corrispondono al comandante. Identità richiesta: ${identity.join(", ")||"incolore"}.`},{status:400});
-const slug=commander.name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-const er=await fetch(`https://json.edhrec.com/pages/commanders/${slug}.json`,{headers:{"User-Agent":"PreconUpgrade/1.0"},cache:"no-store",signal:AbortSignal.timeout(15000)});
-if(!er.ok)return NextResponse.json({error:"Dati EDHREC non disponibili per questo comandante. Il generatore non può completare la lista."},{status:502});
-const data=await er.json();const stats=new Map<string,{name:string;score:number}>();
+let data:any;try{data=await commanderPage(commander.name);}catch(err){return NextResponse.json({error:err instanceof EdhrecError&&err.status===429?err.message:"Dati EDHREC non disponibili per questo comandante. Il generatore non può completare la lista."},{status:err instanceof EdhrecError&&err.status===429?429:502});}const stats=new Map<string,{name:string;score:number}>();
 for(const list of data?.container?.json_dict?.cardlists||[])for(const v of list.cardviews||[]){if(typeof v.name!=="string")continue;const score=Number(v.synergy??0)+Number(v.inclusion??0)*0.001;const previous=stats.get(norm(v.name));if(!previous||score>previous.score)stats.set(norm(v.name),{name:v.name,score:Number.isFinite(score)?score:0});}
 const names=[...stats.values()].sort((a,b)=>b.score-a.score).slice(0,300).map(s=>s.name);
 const basicNames:Record<string,string>={W:"Plains",U:"Island",B:"Swamp",R:"Mountain",G:"Forest"};

@@ -76,6 +76,6 @@ export default function CreateDeck() {
       <p role="status" aria-live="polite">{message}</p>
     </section>
     {result && <section className="panel"><h2>{result.commander}</h2><p>100 carte · {result.cards.some(c => c.priceEUR === null) ? "Subtotale prezzi noti" : "Totale stimato"}: {(subtotal / 100).toFixed(2)} €</p>{result.warnings.map((w, i) => <p className="notice" key={i}>{w}</p>)}<button onClick={copyDeck}>Copia decklist</button><p role="status">{copyMessage}</p><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,220px),1fr))", gap: 20 }}>{result.cards.map((c, i) => <article key={`${c.name}-${i}`}><h3>{c.quantity} × {c.name}</h3><Picture key={c.image} src={c.image} name={c.name} /><p>{c.priceEUR === null ? "Prezzo non disponibile" : `${c.priceEUR.toFixed(2)} € per copia`}</p></article>)}</div><label htmlFor="decklist">Lista da copiare</label><textarea id="decklist" readOnly value={result.cards.map(c => `${c.quantity} ${c.name}`).join("\n")} /></section>}
-    <footer>Immagini tramite Scryfall. Magic: The Gathering e le immagini appartengono ai rispettivi titolari. Sito non ufficiale.</footer>
+    <footer>Statistiche delle carte: <a href="https://edhrec.com" target="_blank" rel="noopener noreferrer">EDHREC</a>. Immagini tramite Scryfall. Magic: The Gathering e le immagini appartengono ai rispettivi titolari. Sito non ufficiale.</footer>
   </main>;
 }
