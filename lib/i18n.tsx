@@ -82,7 +82,7 @@ const dict = {
     // Layout
     buyTcg: "Acquista su TCGplayer",
     affiliate: "Link affiliato: potremmo ricevere una commissione sugli acquisti idonei.",
-    visitors: (n: string) => `${n} visitatori`,
+    visitors: (n: string, one: boolean) => (one ? `${n} visitatore` : `${n} visitatori`),
   },
   en: {
     tagline: "EDHREC statistics + Scryfall card checks",
@@ -158,7 +158,7 @@ const dict = {
     buildFooter: "Images via Scryfall. Magic: The Gathering and its images belong to their respective owners. Unofficial site.",
     buyTcg: "Buy on TCGplayer",
     affiliate: "Affiliate link: we may earn a commission on qualifying purchases.",
-    visitors: (n: string) => `${n} visitors`,
+    visitors: (n: string, one: boolean) => (one ? `${n} visitor` : `${n} visitors`),
   },
 };
 
@@ -244,7 +244,7 @@ export function VisitCounter() {
   const n = count.toLocaleString(lang === "it" ? "it-IT" : "en-US");
   return (
     <p style={{ fontSize: "0.8rem", marginTop: 10, color: "var(--muted)", fontFamily: "'DM Mono', monospace", letterSpacing: 1 }}>
-      {t.visitors(n)}
+      {t.visitors(n, count === 1)}
     </p>
   );
 }
