@@ -62,7 +62,7 @@ export default function CreateDeck() {
   }
   const subtotal = result?.cards.reduce((sum, c) => sum + Math.round((c.priceEUR ?? 0) * 100) * c.quantity, 0) ?? 0;
   return <main className="shell">
-    <header><div className="brand">PRECON UPGRADE <span>NO AI</span></div><div className="headright"><Link href="/">{t.back}</Link><LangSwitch /></div></header>
+    <header><a href="/" className="brand" style={{color:"inherit",textDecoration:"none"}}>PRECON UPGRADE <span>NO AI</span></a><div className="headright"><Link href="/migliora">{t.back}</Link><LangSwitch /></div></header>
     <section className="hero"><h1>{t.buildTitle}</h1><p>{t.buildText}</p></section>
     <section className="panel">
       <form onSubmit={generate}>
