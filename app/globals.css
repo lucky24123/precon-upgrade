@@ -30,3 +30,10 @@
 .land-head .lang button.on{background:#fffefa;color:var(--green)}
 @media(max-width:800px){.land-features{grid-template-columns:1fr}.land-shade{background:linear-gradient(180deg,rgba(12,22,17,.55) 0%,rgba(12,22,17,.85) 55%,rgba(12,22,17,.95) 100%)}.land-inner{padding:18px 18px 44px}.land-copy{padding-top:120px}.land-text{font-size:15px}.cta{flex:1;text-align:center}}
 @media(max-width:600px){header.land-head{flex-direction:row;align-items:center}.land-ctas{flex-direction:column}.cta{width:100%}}
+
+/* Precon trovato */
+.precon-found{margin-top:10px}
+.precon-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.precon-actions select{width:auto;flex:1 1 220px;padding:9px;font-size:13px}
+.precon-actions button{width:auto;margin:0;padding:9px 14px;font-size:13px;text-align:center}
+.precon-actions button.secondary{background:white;color:var(--green);border:1px solid var(--line)}
