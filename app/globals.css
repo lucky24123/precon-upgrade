@@ -29,3 +29,4 @@
 .land-head .lang{border-color:rgba(255,254,250,.4)}
 .land-head .lang button.on{background:#fffefa;color:var(--green)}
 @media(max-width:800px){.land-features{grid-template-columns:1fr}.land-shade{background:linear-gradient(180deg,rgba(12,22,17,.55) 0%,rgba(12,22,17,.85) 55%,rgba(12,22,17,.95) 100%)}.land-inner{padding:18px 18px 44px}.land-copy{padding-top:120px}.land-text{font-size:15px}.cta{flex:1;text-align:center}}
+@media(max-width:600px){header.land-head{flex-direction:row;align-items:center}.land-ctas{flex-direction:column}.cta{width:100%}}
