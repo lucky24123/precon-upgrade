@@ -82,6 +82,7 @@ const dict = {
     // Layout
     buyTcg: "Acquista su TCGplayer",
     affiliate: "Link affiliato: potremmo ricevere una commissione sugli acquisti idonei.",
+    visitors: (n: string) => `${n} visitatori`,
   },
   en: {
     tagline: "EDHREC statistics + Scryfall card checks",
@@ -157,6 +158,7 @@ const dict = {
     buildFooter: "Images via Scryfall. Magic: The Gathering and its images belong to their respective owners. Unofficial site.",
     buyTcg: "Buy on TCGplayer",
     affiliate: "Affiliate link: we may earn a commission on qualifying purchases.",
+    visitors: (n: string) => `${n} visitors`,
   },
 };
 
@@ -209,6 +211,40 @@ export function SiteFooter() {
         {t.buyTcg}
       </a>
       <p style={{ fontSize: "0.875rem", marginTop: 12 }}>{t.affiliate}</p>
+      <VisitCounter />
     </footer>
+  );
+}
+
+// Conta ogni browser una sola volta (flag in localStorage), poi mostra solo il totale.
+export function VisitCounter() {
+  const { lang, t } = useLang();
+  const [count, setCount] = useState<number | null>(null);
+  useEffect(() => {
+    const FLAG = "precon-upgrade-visited";
+    let seen = false;
+    try {
+      seen = localStorage.getItem(FLAG) === "1";
+    } catch {}
+    fetch("/api/visite", { method: seen ? "GET" : "POST", cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((d) => {
+        if (typeof d.count === "number" && d.count > 0) {
+          setCount(d.count);
+          if (!seen) {
+            try {
+              localStorage.setItem(FLAG, "1");
+            } catch {}
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+  if (count === null) return null;
+  const n = count.toLocaleString(lang === "it" ? "it-IT" : "en-US");
+  return (
+    <p style={{ fontSize: "0.8rem", marginTop: 10, color: "var(--muted)", fontFamily: "'DM Mono', monospace", letterSpacing: 1 }}>
+      {t.visitors(n)}
+    </p>
   );
 }
