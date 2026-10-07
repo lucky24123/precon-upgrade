@@ -20,7 +20,7 @@ function isResult(value: unknown): value is DeckResult {
 }
 export default function CreateDeck() {
   const { t, lang } = useLang();
-  const [selected, setSelected] = useState<string[]>(["B", "R"]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [commander, setCommander] = useState("");
   const [budget, setBudget] = useState("");
   const [busy, setBusy] = useState(false);
