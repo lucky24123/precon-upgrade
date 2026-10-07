@@ -10,6 +10,29 @@ const cents=(c:Card)=>{const p=c.prices?.eur;return p!=null&&Number.isFinite(Num
 const headers={"Content-Type":"application/json","User-Agent":"PreconUpgrade/1.0"};
 const wait=()=>new Promise(resolve=>setTimeout(resolve,550));
 async function scry(url:string,init?:RequestInit){const res=await fetch(url,{...init,headers,cache:"no-store",signal:AbortSignal.timeout(15000)});if(!res.ok)throw new Error(res.status===429?"Scryfall è temporaneamente limitato. Attendi e riprova.":"Scryfall non ha restituito le carte richieste. Controlla il nome ufficiale del comandante.");return res.json();}
+const pause=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms));
+// Prezzo in centesimi della stampa più economica con prezzo in euro (Scryfall prefer:eur-low), in blocchi di nomi.
+async function cheapestPrices(names:string[]):Promise<Map<string,number>>{
+  const prices=new Map<string,number>();
+  const usable=names.filter(n=>!n.includes('"'));
+  const chunks:string[][]=[];let current:string[]=[];let len=0;
+  for(const n of usable){const term=`!"${n}"`;if(current.length&&(len+term.length>700||current.length>=25)){chunks.push(current);current=[];len=0;}current.push(term);len+=term.length+4;}
+  if(current.length)chunks.push(current);
+  for(const chunk of chunks){
+    let url:string|null=`https://api.scryfall.com/cards/search?q=${encodeURIComponent(`(${chunk.join(" or ")}) game:paper -set:sum -is:oversized -set_type:memorabilia -set_type:funny prefer:eur-low`)}`; // esclude stampe rare con prezzi anomali (es. Summer Magic)
+    while(url){
+      await pause(550); // Scryfall: max ~2 richieste/s su /cards/search
+      let res:Response;
+      try{res=await fetch(url,{headers,cache:"no-store",signal:AbortSignal.timeout(15000)});}catch{break;}
+      if(!res.ok)break; // 404 = nessuna carta trovata nel blocco; altri errori: si tengono i prezzi originali
+      const page:any=await res.json();
+      for(const c of (page.data||[]) as Card[]){const v=cents(c);if(v!==null)prices.set(norm(c.name),v);}
+      url=page.has_more&&typeof page.next_page==="string"?page.next_page:null;
+    }
+  }
+  return prices;
+}
+const BASIC_ESTIMATE_CENTS=10;
 export async function POST(req:Request){const out=(d:any,init?:ResponseInit)=>NextResponse.json(localize(d,req.headers.get("x-lang")==="en"),init);try{
 const body=await req.json();if(typeof body.commander!=="string"||!body.commander.trim()||!Array.isArray(body.colors))return out({error:"Inserisci comandante e colori."},{status:400});
 const selected=[...new Set<string>(body.colors)];if(selected.some(c=>!["W","U","B","R","G"].includes(c)))return out({error:"Colori non validi."},{status:400});
@@ -28,11 +51,16 @@ const basics=identity.length?identity.map(c=>basicNames[c]):["Wastes"];
 const unique=[...new Set([...names,...basics])];const all:Card[]=[];
 for(let i=0;i<unique.length;i+=75){await wait();const batch=await scry("https://api.scryfall.com/cards/collection",{method:"POST",body:JSON.stringify({identifiers:unique.slice(i,i+75).map(name=>({name}))})});all.push(...(batch.data||[]));}
 const pool=new Map<string,Card>();for(const c of all){if(c.legalities?.commander!=="legal"||c.color_identity.some(x=>!identity.includes(x)))continue;pool.set(norm(c.name),c);}
+const cheapest=await cheapestPrices([commander.name,...pool.values()].map(c=>typeof c==="string"?c:c.name));
+const withPrice=(c:Card):Card=>{const v=cheapest.get(norm(c.name));const own=cents(c);return v!==undefined&&(own===null||v<own)?{...c,prices:{...c.prices,eur:(v/100).toFixed(2)}}:c;};
+for(const [k,c] of pool)pool.set(k,withPrice(c));
+const commanderPriced=withPrice(commander);
 const spells=[...pool.values()].filter(c=>norm(c.name)!==norm(commander.name)&&!c.type_line.includes("Land")&&stats.has(norm(c.name))).filter(c=>cap===null||cents(c)!==null);
 if(spells.length<62)return out({error:`Solo ${spells.length} carte non terra utilizzabili: ne servono 62. Prova un altro comandante o rimuovi il budget.`},{status:422});
-const landCards=basics.map(name=>pool.get(norm(name)));if(landCards.some(c=>!c))return out({error:"Non riesco a recuperare tutte le terre base."},{status:502});
+let estimatedBasics=false;
+const landCards=basics.map(name=>pool.get(norm(name))).map(c=>{if(c&&cents(c)===null){estimatedBasics=true;return {...c,prices:{...c.prices,eur:(BASIC_ESTIMATE_CENTS/100).toFixed(2)}};}return c;});if(landCards.some(c=>!c))return out({error:"Non riesco a recuperare tutte le terre base."},{status:502});
 const lands=(landCards as Card[]).map((card,i)=>({card,quantity:Math.floor(37/basics.length)+(i<37%basics.length?1:0)}));
-const fixed=[{card:commander,quantity:1},...lands];if(cap!==null&&fixed.some(x=>cents(x.card)===null))return out({error:"Prezzo mancante per comandante o terre: non posso verificare il budget totale."},{status:422});
+const fixed=[{card:commanderPriced,quantity:1},...lands];if(cap!==null&&cents(commanderPriced)===null)return out({error:"Prezzo del comandante non disponibile su Scryfall: non posso verificare il budget totale. Riprova senza budget."},{status:422});
 const fixedCost=fixed.reduce((sum,x)=>sum+(cents(x.card)??0)*x.quantity,0);
 let chosen:Card[];
 if(cap===null){chosen=spells.sort((a,b)=>(stats.get(norm(b.name))?.score??0)-(stats.get(norm(a.name))?.score??0)).slice(0,62);}
@@ -41,7 +69,7 @@ chosen=[...spells].sort((a,b)=>cents(a)!-cents(b)!).slice(0,62);let cost=fixedCo
 if(cost>cap)return out({error:`Con i prezzi disponibili, questa base richiede almeno ${(cost/100).toFixed(2)} €. Non è un minimo globale: prova più budget o un altro comandante.`},{status:422});
 for(const candidate of [...spells].sort((a,b)=>(stats.get(norm(b.name))?.score??0)-(stats.get(norm(a.name))?.score??0))){if(chosen.some(c=>norm(c.name)===norm(candidate.name)))continue;const order=chosen.map((c,i)=>({c,i})).sort((a,b)=>(stats.get(norm(a.c.name))?.score??0)-(stats.get(norm(b.c.name))?.score??0));const replacement=order.find(x=>(stats.get(norm(candidate.name))?.score??0)>(stats.get(norm(x.c.name))?.score??0)&&cost-cents(x.c)!+cents(candidate)!<=cap);if(replacement){cost=cost-cents(replacement.c)!+cents(candidate)!;chosen[replacement.i]=candidate;}}
 }
-const rows=[{card:commander,quantity:1},...chosen.map(card=>({card,quantity:1})),...lands];
+const rows=[{card:commanderPriced,quantity:1},...chosen.map(card=>({card,quantity:1})),...lands];
 if(rows.reduce((n,x)=>n+x.quantity,0)!==100)throw new Error("Controllo interno: numero carte non valido.");
-return out({commander:commander.name,cards:rows.map(x=>({name:x.card.name,quantity:x.quantity,image:image(x.card),priceEUR:cents(x.card)===null?null:cents(x.card)!/100})),warnings:["Base sperimentale: 1 comandante, 62 carte non terra e 37 terre base. Non è una valutazione strategica o un mazzo competitivo.","Terre distribuite uniformemente tra i colori, non in base ai simboli di mana. Correggi la base di mana prima di giocare.","La selezione usa dati EDHREC, colori, legalità e prezzo. Non garantisce pescata, accelerazione, rimozioni o combo sufficienti.","Prezzi delle stampe restituite da Scryfall, non necessariamente le più economiche; spedizione esclusa. Nessun prezzo garantito.",...(rows.some(x=>cents(x.card)===null)?["Alcuni prezzi mancano: il totale è un subtotale."]:[])]});
+return out({commander:commander.name,cards:rows.map(x=>({name:x.card.name,quantity:x.quantity,image:image(x.card),priceEUR:cents(x.card)===null?null:cents(x.card)!/100})),warnings:["Base sperimentale: 1 comandante, 62 carte non terra e 37 terre base. Non è una valutazione strategica o un mazzo competitivo.","Terre distribuite uniformemente tra i colori, non in base ai simboli di mana. Correggi la base di mana prima di giocare.","La selezione usa dati EDHREC, colori, legalità e prezzo. Non garantisce pescata, accelerazione, rimozioni o combo sufficienti.","Prezzi della stampa più economica con prezzo in euro su Scryfall; spedizione esclusa. Nessun prezzo garantito.",...(estimatedBasics?["Prezzo delle terre base stimato a 0,10 € ciascuna."]:[]),...(rows.some(x=>cents(x.card)===null)?["Alcuni prezzi mancano: il totale è un subtotale."]:[])]});
 }catch(error){console.error(error);return out({error:error instanceof Error?error.message:"Errore di generazione."},{status:502});}}
