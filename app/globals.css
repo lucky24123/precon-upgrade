@@ -37,3 +37,5 @@
 .precon-actions select{width:auto;flex:1 1 220px;padding:9px;font-size:13px}
 .precon-actions button{width:auto;margin:0;padding:9px 14px;font-size:13px;text-align:center}
 .precon-actions button.secondary{background:white;color:var(--green);border:1px solid var(--line)}
+
+.role-tag{display:inline-block;margin:10px 0 0;padding:3px 9px;border:1px solid var(--line);border-radius:999px;font-size:12px;letter-spacing:.04em;color:var(--green)}

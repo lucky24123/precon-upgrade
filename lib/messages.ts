@@ -39,9 +39,19 @@ const exact: Record<string, string> = {
   "EDHREC sta limitando le richieste. Riprova tra qualche secondo.": "EDHREC is rate limiting requests. Try again in a few seconds.",
   "EDHREC non ha una pagina per questo comandante.": "EDHREC has no page for this commander.",
   "Dati EDHREC non disponibili in questo momento.": "EDHREC data is not available right now.",
+  "Terre base divise in proporzione ai simboli di mana delle carte. La selezione usa dati EDHREC, colori, legalità e prezzo.": "Basic lands split according to the mana symbols of the cards. Selection uses EDHREC data, colors, legality and price.",
 };
 
+const ROLE_EN: Record<string, string> = { "Terra": "Land", "Rampa (mana)": "Ramp (mana)", "Pescata": "Card draw", "Rimozione": "Removal", "Rimozione di massa": "Board wipe", "Ricerca (tutor)": "Tutor", "Protezione": "Protection", "Sinergia col comandante": "Commander synergy" };
+const roleEn = (r: string) => ROLE_EN[r] || r;
+
 const patterns: [RegExp, (...m: string[]) => string][] = [
+  [/^(?:Stessa funzione \((.*?)\)|Stesso tipo di carta \((.*?)\), funzione: (.*?)): (.*?) è tra le carte più giocate in Commander in generale \(classifica EDHREC\), adatta a un budget alto\. (.*) è giocata poco con questo comandante\.$/, (_, r1, g, r2, add, cut) => `${r1 ? `Same role (${roleEn(r1)})` : `Same card type (${g}), role: ${roleEn(r2)}`}: ${add} is one of the most played Commander cards overall (EDHREC ranking), fitting a high budget. ${cut} is rarely played with this commander.`],
+  [/^Base sperimentale: 1 comandante, 62 carte non terra e 37 terre \((\d+) non base, (\d+) base\)\. Non è un mazzo competitivo\.$/, (_, a, b) => `Experimental base: 1 commander, 62 nonland cards and 37 lands (${a} nonbasic, ${b} basic). Not a competitive deck.`],
+  [/^Funzioni nel mazzo: (\d+) rampa, (\d+) pescata, (\d+) rimozioni, (\d+) rimozioni di massa \(stima dal testo delle carte\)\.$/, (_, a, b, c, d) => `Roles in the deck: ${a} ramp, ${b} card draw, ${c} removal, ${d} board wipes (estimated from card text).`],
+  [/^Per usare il budget ho aggiunto (\d+) cambi oltre ai (\d+) richiesti\.$/, (_, a, b) => `To use the budget I added ${a} swaps beyond the ${b} requested.`],
+  [/^Speso (.*) € su (.*) €: per questo comandante non ci sono abbastanza carte utili più care che migliorino il mazzo\.$/, (_, a, b) => `Spent ${a} € of ${b} €: there aren't enough useful pricier cards that improve the deck for this commander.`],
+  [/^(?:Stessa funzione \((.*?)\)|Stesso tipo di carta \((.*?)\), funzione: (.*?)): (.*?) è giocata nel (\S+) dei mazzi con questo comandante(?:, (.*) nel (\S+)\.|; (.*) quasi mai\.)$/, (_, r1, g, r2, add, pa, cut1, pc, cut2) => `${r1 ? `Same role (${roleEn(r1)})` : `Same card type (${g}), role: ${roleEn(r2)}`}: ${add} is played in ${pa} of decks with this commander, ${cut1 ? `${cut1} in ${pc}.` : `${cut2} almost never.`}`],
   [/^Scryfall non riconosce il comandante “(.*)”\. Inserisci il nome ufficiale della carta\.$/, (_, n) => `Scryfall doesn't recognize the commander “${n}”. Enter the card's official name.`],
   [/^Alternativa dello stesso tipo \((.*?)\)\. La carta tolta non compare nelle statistiche disponibili: non significa che sia peggiore\. Verifica il taglio\.$/, (_, g) => `Same-type alternative (${g}). The removed card doesn't appear in the available statistics: that doesn't mean it is worse. Check the cut.`],
   [/^Alternativa dello stesso tipo \((.*?)\) con punteggio EDHREC maggiore\. Verifica ruolo e sinergie\.$/, (_, g) => `Same-type alternative (${g}) with a higher EDHREC score. Check role and synergies.`],
@@ -60,13 +70,14 @@ export function toEnglish(text: string): string {
   return text;
 }
 
-const keys = new Set(["error", "warning", "warnings", "reason", "selectionNotice", "name"]);
+const keys = new Set(["role", "error", "warning", "warnings", "reason", "selectionNotice", "name"]);
 
 // Traduce solo i campi testuali noti; i nomi delle carte restano invariati perché non compaiono nel dizionario.
+export const roleToEnglish = roleEn;
 export function localize<T>(data: T, en: boolean): T {
   if (!en) return data;
   const walk = (v: any, key?: string): any => {
-    if (typeof v === "string") return key && keys.has(key) ? toEnglish(v) : v;
+    if (typeof v === "string") return key === "role" ? roleEn(v) : key && keys.has(key) ? toEnglish(v) : v;
     if (Array.isArray(v)) return v.map((x) => walk(x, key));
     if (v && typeof v === "object") return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x, k)]));
     return v;
