@@ -46,6 +46,9 @@ const ROLE_EN: Record<string, string> = { "Terra": "Land", "Rampa (mana)": "Ramp
 const roleEn = (r: string) => ROLE_EN[r] || r;
 
 const patterns: [RegExp, (...m: string[]) => string][] = [
+  [/^Costa meno: (\S+) mana invece di (\S+)\.$/, (_, a, b) => `Cheaper: ${a} mana instead of ${b}.`],
+  [/^Stesso costo: (\S+) mana\.$/, (_, a) => `Same cost: ${a} mana.`],
+  [/^Costa un po' di più: (\S+) mana invece di (\S+)\.$/, (_, a, b) => `Slightly more expensive: ${a} mana instead of ${b}.`],
   [/^(?:Stessa funzione \((.*?)\)|Stesso tipo di carta \((.*?)\), funzione: (.*?)): (.*?) è tra le carte più giocate in Commander in generale \(classifica EDHREC\), adatta a un budget alto\. (.*) è giocata poco con questo comandante\.$/, (_, r1, g, r2, add, cut) => `${r1 ? `Same role (${roleEn(r1)})` : `Same card type (${g}), role: ${roleEn(r2)}`}: ${add} is one of the most played Commander cards overall (EDHREC ranking), fitting a high budget. ${cut} is rarely played with this commander.`],
   [/^Base sperimentale: 1 comandante, 62 carte non terra e 37 terre \((\d+) non base, (\d+) base\)\. Non è un mazzo competitivo\.$/, (_, a, b) => `Experimental base: 1 commander, 62 nonland cards and 37 lands (${a} nonbasic, ${b} basic). Not a competitive deck.`],
   [/^Funzioni nel mazzo: (\d+) rampa, (\d+) pescata, (\d+) rimozioni, (\d+) rimozioni di massa \(stima dal testo delle carte\)\.$/, (_, a, b, c, d) => `Roles in the deck: ${a} ramp, ${b} card draw, ${c} removal, ${d} board wipes (estimated from card text).`],
@@ -70,7 +73,7 @@ export function toEnglish(text: string): string {
   return text;
 }
 
-const keys = new Set(["role", "error", "warning", "warnings", "reason", "selectionNotice", "name"]);
+const keys = new Set(["manaNote", "role", "error", "warning", "warnings", "reason", "selectionNotice", "name"]);
 
 // Traduce solo i campi testuali noti; i nomi delle carte restano invariati perché non compaiono nel dizionario.
 export const roleToEnglish = roleEn;
