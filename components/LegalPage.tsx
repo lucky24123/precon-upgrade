@@ -2,6 +2,7 @@
 
 import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "./AuthButton";
+import InstagramLink from "./InstagramLink";
 
 export type LegalSection = { title: string; body: (string | string[])[] };
 export type LegalContent = { title: string; intro: string; updated: string; sections: LegalSection[] };
@@ -20,6 +21,7 @@ export default function LegalPage({ it, en }: { it: LegalContent; en: LegalConte
           <p>{t.tagline}</p>
           <AuthButton />
           <LangSwitch />
+          <InstagramLink />
         </div>
       </header>
       <section className="hero">

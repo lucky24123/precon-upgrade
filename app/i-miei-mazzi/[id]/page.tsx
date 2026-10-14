@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../../lib/supabase-client";
 import { useLang, LangSwitch } from "../../../lib/i18n";
 import AuthButton from "../../../components/AuthButton";
+import InstagramLink from "../../../components/InstagramLink";
 
 type CardRow = { name: string; quantity: number; is_commander: boolean };
 type Deck = { id: string; title: string; commander: string; origin: string; deck_cards: CardRow[];
@@ -51,7 +52,7 @@ export default function DeckDetail() {
     <main className="shell">
       <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>PRECON UPGRADE <span>NO AI</span></Link>
-        <div className="headright"><p>{t.tagline}</p><AuthButton /><LangSwitch /></div>
+        <div className="headright"><p>{t.tagline}</p><AuthButton /><LangSwitch /><InstagramLink /></div>
       </header>
       <section className="hero"><h1>{deck ? deck.title : "…"}</h1><p>{deck ? `${deck.commander} · ${total} ${t.cardsLabel}` : ""}</p></section>
       {missing && <section className="panel"><p className="notice">{t.deckNotFound}</p></section>}

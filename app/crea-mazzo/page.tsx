@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import AuthButton from "../../components/AuthButton";
+import InstagramLink from "../../components/InstagramLink";
 import SaveDeck from "../../components/SaveDeck";
 import { useLang, LangSwitch } from "../../lib/i18n";
 
@@ -163,6 +164,7 @@ export default function CreateDeck() {
           <Link href="/migliora">{t.back}</Link>
           <AuthButton />
           <LangSwitch />
+          <InstagramLink />
         </div>
       </header>
       <section className="hero">

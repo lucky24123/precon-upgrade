@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import AuthButton from "../../components/AuthButton";
+import InstagramLink from "../../components/InstagramLink";
 import SaveDeck, { type SavedCard } from "../../components/SaveDeck";
 import { useLang, LangSwitch } from "../../lib/i18n";
 type Swap = {
@@ -162,6 +163,7 @@ export default function Home() {
           <p>{t.tagline}</p>
           <AuthButton />
           <LangSwitch />
+          <InstagramLink />
         </div>
       </header>
       <nav className="links" aria-label={t.navAria}>

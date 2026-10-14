@@ -3,6 +3,7 @@
 import type { BannedCard } from "../../lib/banned";
 import { useLang, LangSwitch } from "../../lib/i18n";
 import AuthButton from "../../components/AuthButton";
+import InstagramLink from "../../components/InstagramLink";
 
 export function BanList({ cards, error }: { cards: BannedCard[]; error: string | null }) {
   const { t } = useLang();
@@ -16,6 +17,7 @@ export function BanList({ cards, error }: { cards: BannedCard[]; error: string |
           <p>{t.tagline}</p>
           <AuthButton />
           <LangSwitch />
+          <InstagramLink />
         </div>
       </header>
       <section className="hero">

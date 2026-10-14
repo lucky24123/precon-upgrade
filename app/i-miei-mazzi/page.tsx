@@ -8,6 +8,7 @@ import Link from "next/link";
 import { createSupabaseBrowserClient } from "../../lib/supabase-client";
 import { useLang, LangSwitch } from "../../lib/i18n";
 import AuthButton from "../../components/AuthButton";
+import InstagramLink from "../../components/InstagramLink";
 
 type DeckRow = { id: string; title: string; commander: string; origin: string; updated_at: string; deck_cards: { quantity: number }[] };
 
@@ -48,7 +49,7 @@ export default function MyDecks() {
     <main className="shell">
       <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>PRECON UPGRADE <span>NO AI</span></Link>
-        <div className="headright"><p>{t.tagline}</p><AuthButton /><LangSwitch /></div>
+        <div className="headright"><p>{t.tagline}</p><AuthButton /><LangSwitch /><InstagramLink /></div>
       </header>
       <section className="hero">
         <h1>{t.myDecks}</h1>

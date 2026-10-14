@@ -82,3 +82,7 @@
 @media(max-width:600px){.auth-out{flex-wrap:wrap}.auth-hint{flex-basis:100%;max-width:none;text-align:left;margin:0 0 2px}}
 .brand{white-space:nowrap;flex-shrink:0}
 header .headright{justify-content:flex-end}
+
+.insta{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:white;color:var(--green);flex-shrink:0;transition:background .15s,color .15s}
+.insta:hover{background:linear-gradient(45deg,#f9a03f,#e1306c 50%,#833ab4);color:#fff;border-color:transparent}
+.land-head .insta{background:transparent;color:#fffefa;border-color:rgba(255,254,250,.4)}

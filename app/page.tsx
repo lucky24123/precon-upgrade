@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
+import InstagramLink from "../components/InstagramLink";
 
 export default function Landing() {
   const { t } = useLang();
@@ -19,6 +20,7 @@ export default function Landing() {
             <div className="headright">
               <AuthButton />
               <LangSwitch />
+          <InstagramLink />
             </div>
           </header>
           <div className="land-copy">
