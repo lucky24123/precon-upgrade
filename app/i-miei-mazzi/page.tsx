@@ -48,7 +48,7 @@ export default function MyDecks() {
     <main className="shell">
       <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>PRECON UPGRADE <span>NO AI</span></Link>
-        <div className="headright"><p>{t.tagline}</p><LangSwitch /><AuthButton /></div>
+        <div className="headright"><p>{t.tagline}</p><AuthButton /><LangSwitch /></div>
       </header>
       <section className="hero">
         <h1>{t.myDecks}</h1>
@@ -56,7 +56,7 @@ export default function MyDecks() {
       </section>
       <section className="panel">
         {error && <p role="alert" className="notice">{error}</p>}
-        {loggedOut && <AuthButton />}
+        {loggedOut && <AuthButton variant="inline" />}
         {decks === null && !loggedOut && <p className="fine">…</p>}
         {decks && decks.length === 0 && <p className="fine">{t.myDecksEmpty}</p>}
         {decks && decks.map(d => (

@@ -50,7 +50,7 @@ export default function SaveDeck({ payload }: { payload: SavePayload }) {
         payload.origin === "upgrade" ? (en ? "Save comparison" : "Salva confronto") : (en ? "Save deck" : "Salva mazzo")}
     </button>
     <p role="status">{message}</p>
-    {needsLogin && <AuthButton />}
+    {needsLogin && <AuthButton variant="inline" />}
     {id && <Link href={`/i-miei-mazzi/${id}`}>{en ? "Open saved list" : "Apri il salvataggio"}</Link>}
     {payload.origin === "upgrade" && <p className="fine">
       {en ? "Saves the original list and suggested swaps; swaps are not applied automatically." :

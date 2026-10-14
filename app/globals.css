@@ -44,3 +44,26 @@
 .auth{max-width:100%}.authbtn{min-height:44px}.auth .fine{flex-basis:100%;margin:0}
 .save-box input:focus-visible,.authbtn:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 .authbtn{width:auto;margin:0;padding:8px 12px;border-radius:5px;background:var(--green);color:white;font-size:12px;text-align:center}.authmenu{position:absolute;right:0;top:100%;background:var(--paper);border:1px solid var(--line);border-radius:5px;box-shadow:0 6px 22px #24362b1a;min-width:160px;z-index:5;display:flex;flex-direction:column}.authmenu button{width:100%;margin:0;padding:10px 12px;border-radius:0;background:transparent;color:var(--ink);text-align:left;font-weight:400}.authmenu button:hover{background:#f2f0e9}
+.auth-out,.auth-in{position:relative;display:flex;align-items:center;gap:8px}
+.authbtn.ghostbtn{background:transparent;color:var(--green);border:1px solid var(--green)}
+.authbtn.ghostbtn:hover{background:#eaf1e9}
+.auth-user{display:flex;flex-direction:column;line-height:1.2;text-decoration:none;color:var(--ink);max-width:160px}
+.auth-name{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-sub{font-size:11px;color:var(--green)}
+.auth-user:hover .auth-sub{text-decoration:underline}
+.authpanel{position:absolute;right:0;top:calc(100% + 8px);width:290px;max-width:calc(100vw - 28px);background:var(--paper);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px #24362b26;padding:16px;z-index:20;color:var(--ink);text-align:left}
+.authpanel-title{font:600 18px 'Playfair Display',serif;margin:0 0 12px;color:var(--ink)}
+.authpanel .fine{margin:12px 0 0;color:var(--muted)}
+.auth-providers{display:flex;flex-direction:column;gap:8px}
+.auth-providers .authbtn.provider{width:100%;text-align:center;font-size:13px}
+.auth-providers small{color:inherit;font-size:11px;font-weight:400}
+.auth-inline{display:flex;flex-direction:column;gap:8px;max-width:320px}
+.auth-inline .fine{margin:0}
+.authpanel-switch{width:100%;margin:10px 0 0;padding:6px 0;background:transparent;color:var(--green);font-size:12px;font-weight:600;text-align:left;text-decoration:underline}
+.land-head .headright{gap:10px}
+.land-head .authbtn{background:#fffefa;color:var(--green)}
+.land-head .authbtn.ghostbtn{background:transparent;color:#fffefa;border-color:rgba(255,254,250,.6)}
+.land-head .authbtn.ghostbtn:hover{background:rgba(255,254,250,.1)}
+.land-head .auth-user,.land-head .auth-sub{color:#fffefa}
+.land-head .authpanel .authbtn.provider{background:var(--green);color:#fff}
+@media(max-width:600px){.authpanel{right:auto;left:0}header.land-head{flex-wrap:wrap;gap:12px}}

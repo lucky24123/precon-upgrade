@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useLang, LangSwitch } from "../lib/i18n";
+import AuthButton from "../components/AuthButton";
 
 export default function Landing() {
   const { t } = useLang();
@@ -15,7 +16,10 @@ export default function Landing() {
         <div className="land-inner">
           <header className="land-head">
             <Link href="/" className="brand">PRECON UPGRADE <span>NO AI</span></Link>
-            <LangSwitch />
+            <div className="headright">
+              <AuthButton />
+              <LangSwitch />
+            </div>
           </header>
           <div className="land-copy">
             <p className="land-kicker">{t.landKicker}</p>
