@@ -161,6 +161,7 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
 
   return (
     <div className="auth auth-out" ref={box}>
+      <span className="auth-hint">{en ? "Sign up or sign in to save your decks" : "Registrati o fai login per salvare i mazzi"}</span>
       <button type="button" className="authbtn" aria-expanded={panel === "login"} disabled={!ready}
         onClick={() => setPanel(p => p === "login" ? null : "login")}>{t.signIn}</button>
       <button type="button" className="authbtn ghostbtn" aria-expanded={panel === "signup"} disabled={!ready}
