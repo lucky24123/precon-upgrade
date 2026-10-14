@@ -118,6 +118,8 @@ const dict = {
     buyTcg: "Acquista su TCGplayer",
     affiliate: "Link affiliato: potremmo ricevere una commissione sugli acquisti idonei.",
     visitors: (n: string, one: boolean) => (one ? `${n} visitatore` : `${n} visitatori`),
+    privacy: "Privacy",
+    terms: "Termini di servizio",
   },
   en: {
     tagline: "EDHREC statistics + Scryfall card checks",
@@ -228,6 +230,8 @@ const dict = {
     buyTcg: "Buy on TCGplayer",
     affiliate: "Affiliate link: we may earn a commission on qualifying purchases.",
     visitors: (n: string, one: boolean) => (one ? `${n} visitor` : `${n} visitors`),
+    privacy: "Privacy",
+    terms: "Terms of service",
   },
 };
 
@@ -280,6 +284,11 @@ export function SiteFooter() {
         {t.buyTcg}
       </a>
       <p style={{ fontSize: "0.875rem", marginTop: 12 }}>{t.affiliate}</p>
+      <p style={{ fontSize: "0.8rem", marginTop: 10 }}>
+        <a href="/privacy" style={{ color: "var(--green)" }}>{t.privacy}</a>
+        {" · "}
+        <a href="/termini" style={{ color: "var(--green)" }}>{t.terms}</a>
+      </p>
       <VisitCounter />
     </footer>
   );
