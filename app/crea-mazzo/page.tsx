@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import AuthButton from "../../components/AuthButton";
 import { useLang, LangSwitch } from "../../lib/i18n";
 
 type Card = { name: string; quantity: number; image: string | null; priceEUR: number | null };
@@ -62,7 +63,7 @@ export default function CreateDeck() {
   }
   const subtotal = result?.cards.reduce((sum, c) => sum + Math.round((c.priceEUR ?? 0) * 100) * c.quantity, 0) ?? 0;
   return <main className="shell">
-    <header><a href="/" className="brand" style={{color:"inherit",textDecoration:"none"}}>PRECON UPGRADE <span>NO AI</span></a><div className="headright"><Link href="/migliora">{t.back}</Link><LangSwitch /></div></header>
+    <header><a href="/" className="brand" style={{color:"inherit",textDecoration:"none"}}>PRECON UPGRADE <span>NO AI</span></a><div className="headright"><Link href="/migliora">{t.back}</Link><AuthButton /><LangSwitch /></div></header>
     <section className="hero"><h1>{t.buildTitle}</h1><p>{t.buildText}</p></section>
     <section className="panel">
       <form onSubmit={generate}>
