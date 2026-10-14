@@ -244,7 +244,7 @@ export default function Home() {
           <div>
             <label>{t.maxSwaps}</label>
             <select value={count} onChange={(e) => N(Number(e.target.value))}>
-              {[3, 5, 6, 7, 8, 9, 10].map((n) => (
+              {[3, 5, 8, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100].map((n) => (
                 <option key={n} value={n}>
                   {n} {t.upgrades}
                 </option>

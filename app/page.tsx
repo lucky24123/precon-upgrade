@@ -32,6 +32,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      <section className="shell land-account-wrap">
+        <AuthButton variant="landing" />
+      </section>
       <section className="shell land-features">
         <Link href="/migliora" className="feature"><h2>{t.landF1t}</h2><p>{t.landF1}</p></Link>
         <Link href="/crea-mazzo" className="feature"><h2>{t.landF2t}</h2><p>{t.landF2}</p></Link>

@@ -134,7 +134,7 @@ export async function POST(req: Request) {
       );
     const deckSet = new Set(deckCards.map((c) => normalize(c.name)));
     const identity = commanderCard.color_identity || [];
-    const max = Math.min(10, Math.max(1, Math.floor(Number(count) || 5)));
+    const max = Math.min(100, Math.max(1, Math.floor(Number(count) || 5)));
     const raw = String(budget ?? "").trim();
     const limit = raw
       ? Number(raw.replace(/€/g, "").replace(/\s/g, "").replace(",", "."))
@@ -199,7 +199,7 @@ export async function POST(req: Request) {
     const possible = [...stats.values()]
       .filter((s) => !deckSet.has(normalize(s.name)))
       .sort((a, b) => b.score - a.score)
-      .slice(0, cap !== null && cap >= 15000 ? 300 : 180);
+      .slice(0, cap !== null && cap >= 15000 ? Math.max(300, max * 4) : Math.max(180, max * 3));
     const verified = await collection(possible.map((x) => x.name));
     const byName = new Map(verified.cards.map((c) => [normalize(c.name), c]));
     const cheap = await cheapestPrices(verified.cards.map((c) => c.name));

@@ -15,7 +15,7 @@ import { useLang } from "../lib/i18n";
 type SupabaseUser = { id: string; email?: string | null; user_metadata?: Record<string, unknown> };
 type Provider = "google" | "github";
 
-export default function AuthButton({ variant = "header" }: { variant?: "header" | "inline"; compact?: boolean }) {
+export default function AuthButton({ variant = "header" }: { variant?: "header" | "inline" | "landing"; compact?: boolean }) {
   const { t, lang } = useLang();
   const en = lang === "en";
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -119,6 +119,15 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
   if (user) {
     const name = (user.user_metadata?.full_name as string) || (user.user_metadata?.user_name as string) || (user.email || "").split("@")[0];
     if (variant === "inline") return null;
+    if (variant === "landing") {
+      return (
+        <div className="land-account">
+          <h2>{en ? `Welcome back, ${name}` : `Bentornato, ${name}`}</h2>
+          <p>{en ? "Your saved decks are always available in My decks." : "I mazzi che salvi sono sempre disponibili in I miei mazzi."}</p>
+          <a className="cta primary" href="/i-miei-mazzi">{t.myDecks} →</a>
+        </div>
+      );
+    }
     return (
       <div className="auth auth-in">
         <a className="auth-user" href="/i-miei-mazzi" title={t.myDecks}>
@@ -126,6 +135,17 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
           <span className="auth-sub">{t.myDecks}</span>
         </a>
         <button type="button" className="authbtn ghostbtn" onClick={signOut} disabled={busy}>{t.signOut}</button>
+      </div>
+    );
+  }
+
+  if (variant === "landing") {
+    return (
+      <div className="land-account">
+        <h2>{en ? "Sign up or sign in to save your decks" : "Registrati o fai login per salvare i mazzi"}</h2>
+        <p>{en ? "It's free: the first time you continue with Google or GitHub your account is created, and you'll find your upgrades and decks in My decks."
+          : "È gratis: la prima volta che continui con Google o GitHub l'account viene creato, e ritrovi upgrade e mazzi in I miei mazzi."}</p>
+        {providerButtons}
       </div>
     );
   }
