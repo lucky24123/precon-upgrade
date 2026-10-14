@@ -14,30 +14,57 @@ export default function AuthButton({ compact = false }: { compact?: boolean }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [menu, setMenu] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [providers, setProviders] = useState({ google: false, github: false });
 
   useEffect(() => {
     const client = createSupabaseBrowserClient();
     if (!client) return;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } })
+      .then(r => r.ok ? r.json() : null)
+      .then(settings => setProviders({ google: settings?.external?.google === true, github: settings?.external?.github === true }))
+      .catch(() => {});
     client.auth.getUser().then(({ data }) => setUser(data.user));
+    const refresh = () => client.auth.getUser().then(({ data }) => { setUser(data.user); setBusy(false); });
+    window.addEventListener("focus", refresh);
     const { data: sub } = client.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
-    return () => sub.subscription.unsubscribe();
+    return () => { sub.subscription.unsubscribe(); window.removeEventListener("focus", refresh); };
   }, []);
 
   async function signIn(provider: "google" | "github") {
     const client = createSupabaseBrowserClient();
     if (!client) return;
-    setBusy(true);
-    // La pagina corrente torna al login: la bozza resta nel browser e non si perde.
-    const current = window.location.pathname + window.location.search;
-    try {
-      sessionStorage.setItem("precon-login-next", current);
-    } catch {}
-    await client.auth.signInWithOAuth({
+    setBusy(true); setError("");
+    // Login in una finestra separata: la lista generata resta nella pagina originale.
+    const popup = window.open("about:blank", "precon-login", "width=520,height=720");
+    if (!popup) {
+      setBusy(false);
+      setError(lang === "en" ? "Allow pop-ups to sign in without losing your list." :
+        "Consenti le finestre popup per accedere senza perdere la lista.");
+      return;
+    }
+    const { data, error: loginError } = await client.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(current)}`,
+        skipBrowserRedirect: true,
+        redirectTo: `${window.location.origin}/auth/callback?next=/auth/done`,
       },
     });
+    if (loginError || !data.url) {
+      popup.close(); setBusy(false);
+      setError(lang === "en" ? "This login provider is not configured yet." : "Questo metodo di accesso non è ancora configurato.");
+      return;
+    }
+    popup.location.href = data.url;
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      if (popup.closed || Date.now() - started > 300000) {
+        window.clearInterval(timer); setBusy(false);
+        client.auth.getUser().then(({ data }) => setUser(data.user));
+      }
+    }, 1000);
   }
 
   async function signOut() {
@@ -57,7 +84,7 @@ export default function AuthButton({ compact = false }: { compact?: boolean }) {
     return (
       <div className="auth" style={{ position: "relative" }}>
         <button type="button" className="authbtn" onClick={() => setMenu(m => !m)} disabled={busy}>
-          {compact ? "👤" : "👤 "}{name}
+          {name}
         </button>
         {menu && (
           <div className="authmenu">
@@ -70,13 +97,17 @@ export default function AuthButton({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <div className="auth" style={{ display: "flex", gap: 8 }}>
-      <button type="button" className="authbtn" onClick={() => signIn("google")} disabled={busy} title="Google">
+    <div className="auth" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <button type="button" className="authbtn" onClick={() => signIn("google")} disabled={busy || !providers.google} title="Google">
         {t.signIn} · Google
       </button>
-      <button type="button" className="authbtn" onClick={() => signIn("github")} disabled={busy} title="GitHub">
+      <button type="button" className="authbtn" onClick={() => signIn("github")} disabled={busy || !providers.github} title="GitHub">
         GitHub
       </button>
+      {error && <p role="alert" className="notice">{error}</p>}
+      {!providers.google && !providers.github && <p className="fine">
+        {lang === "en" ? "Account sign-in is being configured." : "Accesso account in preparazione."}
+      </p>}
     </div>
   );
 }

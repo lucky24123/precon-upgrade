@@ -5,26 +5,39 @@ import { createServerClient } from "@supabase/ssr";
 // in sessionStorage dal pulsante "Accedi per salvare".
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const requestUrl = new URL(request.url);
+  const { searchParams } = requestUrl;
+  const host = request.headers.get("host") || requestUrl.host;
+  const origin = `${process.env.NODE_ENV === "production" ? "https:" : requestUrl.protocol}//${host}`;
   const code = searchParams.get("code");
-  const next = searchParams.get("next") || "/";
-  if (!code) return NextResponse.redirect(`${origin}${next}`);
+  const requested = searchParams.get("next") || "/";
+  const next = requested.startsWith("/") && !requested.startsWith("//") && !requested.includes("\\")
+    ? requested : "/";
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const response = NextResponse.redirect(new URL(next, origin));
+  response.headers.set("Cache-Control", "private, no-store");
+  if (!code || !url || !key) return response;
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
         },
       },
     }
   );
   const { error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) return NextResponse.redirect(`${origin}${next}`);
-  return NextResponse.redirect(`${origin}${next}`);
+  if (error) {
+    const failed = new URL(next, origin);
+    failed.searchParams.set("auth_error", "1");
+    return NextResponse.redirect(failed);
+  }
+  return response;
 }

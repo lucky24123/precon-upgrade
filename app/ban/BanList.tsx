@@ -19,6 +19,9 @@ export function BanList({ cards, error }: { cards: BannedCard[]; error: string |
       <section className="hero">
         <h1>{t.banTitle}</h1>
         <p>{t.banText}</p>
+        <a href="https://magic.wizards.com/en/banned-restricted-list" target="_blank" rel="noopener noreferrer">
+          Wizards: Banned &amp; Restricted
+        </a>
       </section>
       {error && <p className="notice">{error === "ban-unavailable" ? t.banUnavailable : t.banUnavailable}</p>}
       {cards.length === 0 && !error && <p className="notice">{t.banUnavailable}</p>}

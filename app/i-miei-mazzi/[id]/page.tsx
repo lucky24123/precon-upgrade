@@ -10,7 +10,8 @@ import { useLang, LangSwitch } from "../../../lib/i18n";
 import AuthButton from "../../../components/AuthButton";
 
 type CardRow = { name: string; quantity: number; is_commander: boolean };
-type Deck = { id: string; title: string; commander: string; origin: string; deck_cards: CardRow[] };
+type Deck = { id: string; title: string; commander: string; origin: string; deck_cards: CardRow[];
+  snapshot?: { swaps?: { cut: string | null; add: string; reason: string }[] } };
 
 export default function DeckDetail() {
   const { t } = useLang();
@@ -21,16 +22,26 @@ export default function DeckDetail() {
   useEffect(() => {
     const client = createSupabaseBrowserClient();
     if (!client) { setMissing(true); return; }
-    client.auth.getUser().then(async ({ data }) => {
-      if (!data.user) { setMissing(true); return; }
+    let live = true;
+    const load = async () => {
+      const { data } = await client.auth.getUser();
+      if (!live) return;
+      if (!data.user) { setDeck(null); setMissing(true); return; }
       const { data: row } = await client
         .from("decks")
-        .select("id,title,commander,origin,deck_cards(name,quantity,is_commander)")
+        .select("id,title,commander,origin,snapshot,deck_cards(name,quantity,is_commander)")
         .eq("id", params.id)
         .maybeSingle();
-      if (!row) { setMissing(true); return; }
-      setDeck(row as unknown as Deck);
+      if (!live) return;
+      if (!row) { setDeck(null); setMissing(true); return; }
+      setMissing(false); setDeck(row as unknown as Deck);
+    };
+    void load();
+    window.addEventListener("focus", load);
+    const { data: subscription } = client.auth.onAuthStateChange(event => {
+      if (event === "SIGNED_OUT") { setDeck(null); setMissing(true); }
     });
+    return () => { live = false; window.removeEventListener("focus", load); subscription.subscription.unsubscribe(); };
   }, [params.id]);
 
   const total = deck?.deck_cards.reduce((n, c) => n + c.quantity, 0) || 0;
@@ -49,6 +60,13 @@ export default function DeckDetail() {
           <button type="button" className="authbtn" onClick={() => navigator.clipboard.writeText(list)}>{t.copyDeck}</button>
           <label>{t.listToCopy}</label>
           <textarea readOnly value={list} />
+          {deck.origin === "upgrade" && <>
+            <h2>{t.possibleSwaps}</h2>
+            <p className="fine">{t.swapFine}</p>
+            {deck.snapshot?.swaps?.map((s, i) => <article className="swap" key={i}>
+              <p>{t.remove}: {s.cut} → {t.add}: {s.add}</p><p>{s.reason}</p>
+            </article>)}
+          </>}
         </section>
       )}
     </main>

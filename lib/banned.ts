@@ -3,7 +3,7 @@
 
 export type BannedCard = {
   name: string;
-  oracleText: string; // regole della carta: spiega il motivo del divieto
+  oracleText: string; // Testo delle regole, non motivazione ufficiale del ban.
   imageUrl: string | null;
 };
 
