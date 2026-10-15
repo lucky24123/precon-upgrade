@@ -24,7 +24,19 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [providers, setProviders] = useState({ google: false, github: false });
+  const [isAdmin, setIsAdmin] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsAdmin(false);
+    if (!user) return;
+    const controller = new AbortController();
+    fetch("/api/admin/me", { cache: "no-store", signal: controller.signal })
+      .then(r => r.ok ? r.json() : null)
+      .then(result => { if (!controller.signal.aborted) setIsAdmin(result?.admin === true); })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [user?.id]);
 
   useEffect(() => {
     const client = createSupabaseBrowserClient();
@@ -95,9 +107,10 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
     setBusy(true);
     await client.auth.signOut();
     setUser(null);
+    setIsAdmin(false);
     setBusy(false);
     // Le pagine dell'account non hanno senso da disconnessi.
-    if (window.location.pathname.startsWith("/i-miei-mazzi")) window.location.href = "/";
+    if (window.location.pathname.startsWith("/i-miei-mazzi") || window.location.pathname.startsWith("/amministrazione")) window.location.href = "/";
   }
 
   if (!SUPABASE_CONFIGURED) return null;
@@ -125,6 +138,7 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
           <h2>{en ? `Welcome back, ${name}` : `Bentornato, ${name}`}</h2>
           <p>{en ? "Your saved decks are always available in My decks." : "I mazzi che salvi sono sempre disponibili in I miei mazzi."}</p>
           <a className="cta primary" href="/i-miei-mazzi">{t.myDecks} →</a>
+          {isAdmin && <a className="cta ghost" href="/amministrazione" data-testid="link-administration">{en ? "Administration" : "Amministrazione"}</a>}
         </div>
       );
     }
@@ -134,6 +148,7 @@ export default function AuthButton({ variant = "header" }: { variant?: "header" 
           <span className="auth-name">{name}</span>
           <span className="auth-sub">{t.myDecks}</span>
         </a>
+        {isAdmin && <a className="authbtn" href="/amministrazione" data-testid="link-administration">{en ? "Administration" : "Amministrazione"}</a>}
         <button type="button" className="authbtn ghostbtn" onClick={signOut} disabled={busy}>{t.signOut}</button>
       </div>
     );
