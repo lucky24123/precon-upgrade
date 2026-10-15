@@ -55,8 +55,36 @@ tabella privata tramite un accesso amministrativo al database.
 - Screenshot 1280×900 e 375×812: controllati, nessun overflow orizzontale.
 - Nessun dato reale degli iscritti usato nei test UI o nell'anteprima.
 
-Da completare dopo approvazione: applicazione migrazione, assegnazione
-unico proprietario, `tests/admin-database.sql`, security advisor,
-push/deployment e controllo dell'API anonima in produzione.
-Il test visuale autenticato sul sito reale richiede la sessione del
-proprietario; i test UI con mock non sostituiscono tale prova.
+## Attivazione e controlli del 15 ottobre 2026
+
+- Migrazione applicata dopo approvazione del proprietario.
+- Assegnato un unico amministratore; verificata corrispondenza all'UUID approvato.
+- `tests/admin-database.sql`: completato senza errori, ROLLBACK finale.
+  Lettura amministratore, campi minimi, limite pagina, filtri e ricerca
+  verificati. Utente senza ruolo e anonimo rifiutati; lettura/scrittura
+  della tabella ruoli e auto-promozione tramite metadati rifiutate.
+- RPC diretta anonima: HTTP 401.
+- Codice pubblicato su GitHub; deployment Vercel di `5f19ac0` completato.
+- `/amministrazione` in produzione: HTTP 200; API senza sessione: HTTP 401.
+  Verificati Cache-Control private/no-store, X-Robots-Tag e robots.txt.
+
+### Avvisi del security advisor
+
+- RLS senza policy su `site_private.site_admins`: intenzionale deny-all;
+  schema e tabella privati senza privilegi per anon/authenticated.
+- Esecuzione SECURITY DEFINER da authenticated sulle due RPC: intenzionale.
+  Necessaria per leggere il minimo indispensabile da auth.users; autorizzazione
+  verificata tramite auth.uid() e tabella privata, search_path vuoto,
+  parametri limitati e nessun SQL dinamico. Non sostituire con una query
+  auth.users accessibile indiscriminatamente agli utenti.
+- Protezione password compromesse disabilitata: impostazione generale
+  segnalata dall'advisor, non modificata nell'ambito di questa funzionalità.
+
+Documentazione dei controlli: [funzioni database](https://supabase.com/docs/guides/database/functions),
+[avviso funzioni privilegiate](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable),
+[RLS senza policy](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy)
+e [protezione password](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
+
+Il test visuale autenticato sul sito reale richiede la sessione del proprietario,
+non disponibile durante questa pubblicazione; la lettura autorizzata è stata
+verificata sul database e i test UI con dati sintetici sono separati.
