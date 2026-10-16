@@ -16,10 +16,10 @@ Publisher fornito dal proprietario: `ca-pub-9440869401891473`.
   Non basta rimuovere il nodo script per scaricare una libreria Google attiva.
 - Nessun invio applicativo di email, UUID o contenuti dei mazzi a Google.
 
-## Prima della pubblicazione
+## Sequenza di attivazione
 
-L'account AdSense è in onboarding e il sito risulta ancora da collegare.
-Non è stato osservato un messaggio europeo pubblicato.
+La sequenza seguente separa codice, consenso e approvazione del sito.
+Il solo deployment non abilita automaticamente la pubblicazione degli annunci.
 
 1. Approvazione del proprietario per attivare codice di terze parti e privacy.
 2. Configurare/pubblicare il messaggio europeo nella CMP Google:
@@ -65,8 +65,38 @@ Nessun banner personalizzato sostituisce una CMP certificata.
 - Libreria Google sostituita da stub nei test: nessun annuncio reale richiesto.
 - La build QA non ha variabili Supabase pubbliche: i pulsanti account non
   compaiono nell'anteprima locale. Non modificare le variabili Vercel esistenti.
-- Pubblicazione CMP, consenso reale, Auto Ads, collegamento del sito e
-  revisione AdSense ancora da eseguire, dopo conferma del proprietario.
+- Le verifiche del consenso reale restano distinte dai test con libreria stub.
+
+### Pubblicazione del 16 ottobre 2026
+
+- Il proprietario ha confermato pubblicazione, esclusioni private, privacy,
+  messaggio europeo, Auto Ads in-page e richiesta di revisione.
+- Commit `9412c86` pubblicato su main; integrazione Vercel completata con
+  stato GitHub `success`, deployment `2eethaqmkxoEw1tjyZyLdJok8XUB`.
+- CMP Google: messaggio `Precon Upgrade · Consenso europeo`, sito selezionato,
+  nome e URL privacy corretti; italiano predefinito e inglese disponibile;
+  Acconsento, Nega il consenso in tutte le regioni e Gestisci le opzioni.
+  Ottimizzazione del consenso disattivata, logo opzionale disattivato.
+  La tabella Google mostra `Pubblicato`.
+- Auto Ads: attivi; banner in-page attivi; formati basati sull'intenzione
+  disattivati (0/1), overlay disattivati (0/3), multiplex disattivati.
+  Ottimizzazione automatica degli esperimenti disattivata, per mantenere
+  i formati scelti. Modifiche salvate con applicazione immediata.
+- Proprietà del sito verificata da Google tramite meta tag.
+- Richiesta di revisione inviata: stato osservato `In fase di preparazione`,
+  sezione `Revisione richiesta`. Il sito non è ancora approvato.
+- Produzione: `/ads.txt` HTTP 200 e riga publisher corretta; meta corretto;
+  una sola inclusione dello script sulle sei pagine pubbliche; zero su
+  amministrazione, I miei mazzi e auth/done. Test browser con script stub.
+- API amministratore senza autenticazione: HTTP 401.
+- Privacy IT/EN online; desktop 1280 e mobile 375 controllati, nessun
+  overflow orizzontale nelle pagine pubbliche testate.
+- Un singolo controllo del messaggio reale con i parametri Google non ha
+  ancora mostrato la CMP. Non risultano quindi verificati rifiuto,
+  riapertura delle preferenze o erogazione reale degli annunci.
+  Ripetere dopo propagazione e approvazione senza cliccare annunci.
+- Il pannello riportava ancora ads.txt `Non trovato` prima della revisione,
+  mentre il file live è già disponibile. Attendere la nuova scansione Google.
 
 ## Documentazione
 
