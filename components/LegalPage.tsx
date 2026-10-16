@@ -4,7 +4,7 @@ import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "./AuthButton";
 import InstagramLink from "./InstagramLink";
 
-export type LegalSection = { title: string; body: (string | string[])[] };
+export type LegalSection = { title: string; body: (string | string[])[]; links?: { label: string; href: string }[] };
 export type LegalContent = { title: string; intro: string; updated: string; sections: LegalSection[] };
 
 // Pagina legale bilingue (Privacy, Termini) con l'intestazione comune del sito.
@@ -46,6 +46,10 @@ export default function LegalPage({ it, en }: { it: LegalContent; en: LegalConte
                 </p>
               )
             )}
+            {s.links && <ul style={{ lineHeight: 1.7, paddingLeft: 20 }}>
+              {s.links.map(link => <li key={link.href}><a href={link.href} target="_blank"
+                rel="noopener noreferrer" style={{ color: "var(--green)" }}>{link.label}</a></li>)}
+            </ul>}
           </section>
         ))}
       </article>

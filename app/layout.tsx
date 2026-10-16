@@ -2,6 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { LangProvider, SiteFooter } from "../lib/i18n";
 import { SITE_URL, SITE_NAME, GOOGLE_SITE_VERIFICATION } from "../lib/site";
+import AdSense from "../components/AdSense";
+import { ADSENSE_CLIENT } from "../lib/adsense";
 
 const description =
   "Upgrade gratuiti per i precon Commander di Magic: The Gathering. Inserisci la lista del mazzo e ricevi sostituzioni basate su EDHREC, con prezzi in euro e budget. Nessuna AI.";
@@ -27,6 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: "Precon Upgrade — upgrade per i precon Commander", description },
   robots: { index: true, follow: true },
+  other: { "google-adsense-account": ADSENSE_CLIENT },
   ...(GOOGLE_SITE_VERIFICATION ? { verification: { google: GOOGLE_SITE_VERIFICATION } } : {}),
 };
 
@@ -34,10 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body>
-        <LangProvider>
-          {children}
-          <SiteFooter />
-        </LangProvider>
+        <AdSense>
+          <LangProvider>
+            {children}
+            <SiteFooter />
+          </LangProvider>
+        </AdSense>
       </body>
     </html>
   );
