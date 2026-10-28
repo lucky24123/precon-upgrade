@@ -28,8 +28,8 @@ export default function Landing() {
             <h1>{t.landTitle1}<br /><i>{t.landTitle2}</i></h1>
             <p className="land-text">{t.landText}</p>
             <div className="land-ctas">
-              <Link href="/migliora" className="cta primary">{t.landCtaUpgrade}</Link>
-              <Link href="/crea-mazzo" className="cta ghost">{t.landCtaBuild}</Link>
+              <Link href="/migliora" className="cta primary btn-tap">{t.landCtaUpgrade}</Link>
+              <Link href="/crea-mazzo" className="cta ghost btn-tap">{t.landCtaBuild}</Link>
             </div>
           </div>
         </div>
@@ -38,10 +38,10 @@ export default function Landing() {
         <AuthButton variant="landing" />
       </section>
       <section className="shell land-features">
-        <Link href="/migliora" className="feature"><h2>{t.landF1t}</h2><p>{t.landF1}</p></Link>
-        <Link href="/crea-mazzo" className="feature"><h2>{t.landF2t}</h2><p>{t.landF2}</p></Link>
-        <Link href="/crea-mazzo" className="feature"><h2>{t.landF3t}</h2><p>{t.landF3}</p></Link>
-        <Link href="/guida/come-funziona" className="feature"><h2>{t.landF4t}</h2><p>{t.landF4}</p></Link>
+        <Link href="/migliora" className="feature card-foil"><h2>{t.landF1t}</h2><p>{t.landF1}</p></Link>
+        <Link href="/crea-mazzo" className="feature card-foil"><h2>{t.landF2t}</h2><p>{t.landF2}</p></Link>
+        <Link href="/crea-mazzo" className="feature card-foil"><h2>{t.landF3t}</h2><p>{t.landF3}</p></Link>
+        <Link href="/guida/come-funziona" className="feature card-foil"><h2>{t.landF4t}</h2><p>{t.landF4}</p></Link>
       </section>
     </main>
   );
