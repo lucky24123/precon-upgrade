@@ -41,6 +41,7 @@ export default function Landing() {
         <Link href="/migliora" className="feature"><h2>{t.landF1t}</h2><p>{t.landF1}</p></Link>
         <Link href="/crea-mazzo" className="feature"><h2>{t.landF2t}</h2><p>{t.landF2}</p></Link>
         <Link href="/crea-mazzo" className="feature"><h2>{t.landF3t}</h2><p>{t.landF3}</p></Link>
+        <Link href="/guida/come-funziona" className="feature"><h2>{t.landF4t}</h2><p>{t.landF4}</p></Link>
       </section>
     </main>
   );

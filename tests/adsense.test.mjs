@@ -17,7 +17,7 @@ test("publisher matches the owner supplied snippet and ads.txt", () => {
 });
 
 test("all public pages are allowed, private and unknown routes fail closed", () => {
-  for (const path of ["/", "/crea-mazzo", "/migliora", "/ban", "/privacy", "/termini", "/ban/"]) {
+  for (const path of ["/", "/crea-mazzo", "/migliora", "/ban", "/privacy", "/termini", "/ban/", "/guida/come-funziona", "/guida/migliorare-precon", "/guida/creare-mazzo"]) {
     assert.equal(exports.isAdSensePage(path), true, path);
   }
   for (const path of [null, "/amministrazione", "/i-miei-mazzi", "/i-miei-mazzi/example", "/auth/done", "/auth/callback", "/api/admin/users", "/unknown"]) {

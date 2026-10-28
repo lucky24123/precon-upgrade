@@ -170,6 +170,7 @@ export default function Home() {
         <a href="/migliora">{t.navUpgrade}</a>
         <a href="/crea-mazzo">{t.navBuild}</a>
         <a href="/ban">{t.navBan}</a>
+        <a href="/guida/come-funziona">{t.navGuide}</a>
       </nav>
       <section className="hero">
         <label>{t.heroLabel}</label>

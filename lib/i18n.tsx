@@ -27,9 +27,12 @@ const dict = {
     landF2: "Scegli comandante e colori: il sito prepara una base da 100 carte con le carte più usate su EDHREC.",
     landF3t: "Budget in euro",
     landF3: "Imposta quanto vuoi spendere: i prezzi sono quelli della stampa più economica in euro.",
+    landF4t: "Guide",
+    landF4: "Come migliorare un precon, come costruire un mazzo da zero e come leggono i dati EDHREC e Scryfall i nostri strumenti.",
     landImgAlt: "Mazzo di carte su un tappetino verde con dadi e deck box",
     navBuild: "Crea un mazzo →",
     navBan: "Ban",
+    navGuide: "Guida",
     navAria: "Modalità del sito",
     langAria: "Lingua",
     imageMissing: "Immagine non disponibile",
@@ -120,12 +123,16 @@ const dict = {
     visitors: (n: string, one: boolean) => (one ? `${n} visitatore` : `${n} visitatori`),
     privacy: "Privacy",
     terms: "Termini di servizio",
+    guideHow: "Come funziona",
+    guideUpgrade: "Guida: migliorare un precon",
+    guideBuild: "Guida: creare un mazzo",
   },
   en: {
     tagline: "EDHREC statistics + Scryfall card checks",
     navUpgrade: "Upgrade a deck",
     navBuild: "Build a deck →",
     navBan: "Ban list",
+    navGuide: "Guides",
     preconLoaded: (n: string, set: string, y: string) => `Official list of the «${n}» precon (${set} ${y}) added below. You can edit it, or clear it and paste your own deck.`,
     preconAvailable: (n: string) => `This commander leads an official precon («${n}»). You already have your own list: you can switch to the precon list if you want.`,
     preconEmpty: (n: string) => `Paste your deck below, or use the official list of the «${n}» precon.`,
@@ -144,6 +151,8 @@ const dict = {
     landF2: "Pick a commander and colors: the site prepares a 100-card base with the most used cards on EDHREC.",
     landF3t: "Budget in euros",
     landF3: "Set how much you want to spend: prices come from the cheapest printing in euros.",
+    landF4t: "Guides",
+    landF4: "How to upgrade a precon, how to build a deck from scratch and how our tools read EDHREC and Scryfall data.",
     landImgAlt: "Deck of cards on a green playmat with dice and a deck box",
     navAria: "Site mode",
     langAria: "Language",
@@ -232,6 +241,9 @@ const dict = {
     visitors: (n: string, one: boolean) => (one ? `${n} visitor` : `${n} visitors`),
     privacy: "Privacy",
     terms: "Terms of service",
+    guideHow: "How it works",
+    guideUpgrade: "Guide: upgrading a precon",
+    guideBuild: "Guide: building a deck",
   },
 };
 
@@ -284,6 +296,13 @@ export function SiteFooter() {
         {t.buyTcg}
       </a>
       <p style={{ fontSize: "0.875rem", marginTop: 12 }}>{t.affiliate}</p>
+      <p style={{ fontSize: "0.8rem", marginTop: 10 }}>
+        <a href="/guida/come-funziona" style={{ color: "var(--green)" }}>{t.guideHow}</a>
+        {" · "}
+        <a href="/guida/migliorare-precon" style={{ color: "var(--green)" }}>{t.guideUpgrade}</a>
+        {" · "}
+        <a href="/guida/creare-mazzo" style={{ color: "var(--green)" }}>{t.guideBuild}</a>
+      </p>
       <p style={{ fontSize: "0.8rem", marginTop: 10 }}>
         <a href="/privacy" style={{ color: "var(--green)" }}>{t.privacy}</a>
         {" · "}

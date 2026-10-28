@@ -8,7 +8,8 @@ Publisher fornito dal proprietario: `ca-pub-9440869401891473`.
   la libreria async con crossOrigin anonymous tramite Next Script.
 - Tag account nei metadati HTML per verifica del publisher.
 - `public/ads.txt`: autorizzazione diretta per il publisher.
-- Pubbliche: home, crea mazzo, migliora, ban, privacy e termini.
+- Pubbliche: home, crea mazzo, migliora, ban, privacy, termini e pagine guida
+  `/guida/come-funziona`, `/guida/migliorare-precon`, `/guida/creare-mazzo`.
 - Nessuno script sulle pagine private I miei mazzi, Amministrazione, OAuth
   e su URL non riconosciuti. Il tag account statico non esegue tracciamento.
 - Il componente racchiude i contenuti: un cambio di contesto pubblico/privato
