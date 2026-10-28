@@ -20,6 +20,7 @@ export default function SaveDeck({ payload }: { payload: SavePayload }) {
   const [message, setMessage] = useState("");
   const [needsLogin, setNeedsLogin] = useState(false);
   const [id, setId] = useState("");
+  const [showCounter, setShowCounter] = useState(false);
   if (!SUPABASE_CONFIGURED) return null;
   async function save() {
     setBusy(true); setMessage("");
@@ -37,6 +38,8 @@ export default function SaveDeck({ payload }: { payload: SavePayload }) {
       if (!response.ok) throw new Error(data.error);
       setId(data.id); setNeedsLogin(false);
       setMessage(en ? "Saved to your account." : "Salvato nel tuo account.");
+      setShowCounter(true);
+      setTimeout(() => setShowCounter(false), 1200);
     } catch (err) {
       setMessage(err instanceof Error ? err.message : en ? "Saving failed." : "Salvataggio non riuscito.");
     } finally { setBusy(false); }
@@ -45,10 +48,13 @@ export default function SaveDeck({ payload }: { payload: SavePayload }) {
     <label>{en ? "Name for this save" : "Nome del salvataggio"}
       <input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} disabled={busy || !!id} />
     </label>
-    <button onClick={save} disabled={busy || !title.trim() || !!id}>
-      {busy ? (en ? "Saving…" : "Salvataggio…") :
-        payload.origin === "upgrade" ? (en ? "Save comparison" : "Salva confronto") : (en ? "Save deck" : "Salva mazzo")}
-    </button>
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <button className="btn-tap" onClick={save} disabled={busy || !title.trim() || !!id}>
+        {busy ? (en ? "Saving…" : "Salvataggio…") :
+          payload.origin === "upgrade" ? (en ? "Save comparison" : "Salva confronto") : (en ? "Save deck" : "Salva mazzo")}
+      </button>
+      <span className={`save-counter ${showCounter ? "is-visible" : ""}`}>+1/+1</span>
+    </div>
     <p role="status">{message}</p>
     {needsLogin && <AuthButton variant="inline" />}
     {id && <Link href={`/i-miei-mazzi/${id}`}>{en ? "Open saved list" : "Apri il salvataggio"}</Link>}
