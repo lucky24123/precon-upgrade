@@ -41,7 +41,7 @@ function CardPicture({ src, name }: { src: string | null; name: string }) {
       {t.imageMissing}: {name}
     </p>
   ) : (
-    <a href={src} target="_blank" rel="noreferrer">
+    <a href={src} target="_blank" rel="noreferrer" className="card-foil" style={{ display: "block" }}>
       <img
         src={src}
         alt={name}
@@ -223,12 +223,12 @@ export default function Home() {
                 </select>
               )}
               {deck !== auto.current && (
-                <button type="button" onClick={() => usePrecon(pick)}>
+                <button type="button" className="btn-tap" onClick={() => usePrecon(pick)}>
                   {t.preconUse}
                 </button>
               )}
               {deck.trim() !== "" && (
-                <button type="button" className="secondary" onClick={clearDeck}>
+                <button type="button" className="secondary btn-tap" onClick={clearDeck}>
                   {t.preconClear}
                 </button>
               )}
@@ -264,6 +264,7 @@ export default function Home() {
           </div>
         </div>
         <button
+          className="btn-tap"
           disabled={busy || !commander.trim() || !deck.trim()}
           onClick={run}
         >
