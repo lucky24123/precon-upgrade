@@ -1,135 +1,194 @@
 "use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { useLang, LangSwitch } from "../lib/i18n";
-import AuthButton from "../components/AuthButton";
-import InstagramLink from "../components/InstagramLink";
+import { useLang, LangSwitch } from "@/lib/i18n";
+import AuthButton from "@/components/AuthButton";
+import InstagramLink from "@/components/InstagramLink";
 
-const SHOWCASE = [
-  "Pantlaza, Sun-Favored",
-  "Cloud, Ex-SOLDIER",
-  "Krenko, Mob Boss",
-  "Atraxa, Praetors' Voice",
-  "The Ur-Dragon",
-  "Lathril, Blade of the Elves",
-  "Wilhelt, the Rotcleaver",
-  "Prosper, Tome-Bound",
-];
-
-function scry(name: string) {
-  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image&version=normal`;
-}
-
-export default function Landing() {
+export default function Home() {
   const { t } = useLang();
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
-    <main className="landing">
-      {/* 1. HERO fullscreen — struttura demo */}
-      <section className="land-hero">
-        <picture>
-          <source media="(max-width: 700px)" srcSet="/hero-mazzo-960.webp" />
-          <img src="/hero-mazzo.webp" alt={t.landImgAlt} fetchPriority="high" />
-        </picture>
-        <div className="land-shade" />
-        <div className="land-cards" aria-hidden="true">
-          {SHOWCASE.slice(0, 5).map((name, i) => (
-            <img
-              key={name}
-              src={scry(name)}
-              alt=""
-              className={`land-card land-card-${i + 1}`}
-              loading={i < 2 ? "eager" : "lazy"}
-            />
-          ))}
+    <main className="shell">
+      {/* Header / Navigazione Superiore */}
+      <header className="nav-header">
+        <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
+          PRECON UPGRADE <span>NO AI</span>
+        </Link>
+        <div className="nav-links-right">
+          <Link href="/cerca" className="nav-link-btn">Cerca</Link>
+          <Link href="/deckbuilder" className="nav-link-btn">Deckbuilder</Link>
+          <Link href="/upgrade" className="nav-link-btn primary">Upgrade</Link>
+          <AuthButton />
+          <LangSwitch />
+          <InstagramLink />
         </div>
-        <div className="land-inner">
-          <header className="land-head">
-            <Link href="/" className="brand">
-              PRECON UPGRADE <span>NO AI</span>
-            </Link>
-            <div className="headright">
-              <AuthButton />
-              <LangSwitch />
-              <InstagramLink />
+      </header>
+
+      {/* Sezione Hero Principale */}
+      <section className="hero-section">
+        <div className="hero-badge">MAGIC: THE GATHERING · COMMANDER</div>
+        <h1 className="hero-title">
+          Eredi il precon.<br />
+          <span>Forgia la leggenda.</span>
+        </h1>
+        <p className="hero-subtitle">
+          Strumenti gratuiti basati su statistiche EDHREC e dati Scryfall, con prezzi e uri un budget a tua scelta.<br />
+          Nessuna AI.
+        </p>
+
+        {/* Pulsanti di azione rapida */}
+        <div className="hero-actions">
+          <Link href="/upgrade" className="btn-primary-gold">
+            Upgrade un precon →
+          </Link>
+          <Link href="/deckbuilder" className="btn-secondary">
+            Costruisci da zero
+          </Link>
+          <Link href="/cerca" className="btn-secondary">
+            Cerca carte
+          </Link>
+        </div>
+
+        {/* Marquee / Barra scorrevole carte popolari */}
+        <div className="popular-cards-bar">
+          <span>⚡</span>
+          <div className="cards-ticker">
+            <span>Cyclonic Rift</span>
+            <span>Smothering Tithe</span>
+            <span>Demonic Tutor</span>
+            <span>Rhystic Study</span>
+            <span>Fierce Guardianship</span>
+            <span>Teferi's Protection</span>
+            <span>Mana Crypt</span>
+            <span>Force of Will</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Sezione Precon Ufficiali */}
+      <section className="content-section">
+        <div className="section-header-row">
+          <h3>PRECON UFFICIALI</h3>
+          <h2>Scegli un precon da potenziare</h2>
+        </div>
+
+        <div className="decks-grid">
+          {/* Card Precon 1 */}
+          <Link href="/upgrade?precon=ruinous-powers" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>The Ruinous Powers</h4>
+              <p>Warhammer 40,000</p>
+              <div className="color-indicators">
+                <span className="dot b"></span>
+                <span className="dot r"></span>
+              </div>
             </div>
-          </header>
-          <div className="land-copy">
-            <p className="land-kicker">{t.landKicker}</p>
-            <h1>
-              {t.landTitle1}
-              <br />
-              <i>{t.landTitle2}</i>
-            </h1>
-            <p className="land-text">{t.landText}</p>
-            <div className="land-ctas">
-              <Link href="/migliora" className="cta primary btn-tap">
-                {t.landCtaUpgrade}
-              </Link>
-              <Link href="/crea-mazzo" className="cta ghost btn-tap">
-                {t.landCtaBuild}
-              </Link>
+          </Link>
+
+          {/* Card Precon 2 */}
+          <Link href="/upgrade?precon=ahoy-mateys" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Ahoy Mateys</h4>
+              <p>The Lost Caverns of Ixalan</p>
+              <div className="color-indicators">
+                <span className="dot w"></span>
+                <span className="dot b"></span>
+                <span className="dot r"></span>
+              </div>
             </div>
-          </div>
+          </Link>
+
+          {/* Card Precon 3 */}
+          <Link href="/upgrade?precon=quantum-quandrix" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Quantum Quandrix</h4>
+              <p>Commander 2021</p>
+              <div className="color-indicators">
+                <span className="dot g"></span>
+                <span className="dot u"></span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Card Precon 4 */}
+          <Link href="/upgrade?precon=reap-the-tides" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Reap the Tides</h4>
+              <p>Commander Legends</p>
+              <div className="color-indicators">
+                <span className="dot g"></span>
+                <span className="dot u"></span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Card Precon 5 */}
+          <Link href="/upgrade?precon=subjective-reality" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Subjective Reality</h4>
+              <p>Commander 2018</p>
+              <div className="color-indicators">
+                <span className="dot w"></span>
+                <span className="dot u"></span>
+                <span className="dot b"></span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Card Precon 6 */}
+          <Link href="/upgrade?precon=miracle-worker" className="deck-card">
+            <div className="deck-card-image placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Miracle Worker</h4>
+              <p>Duskmourn</p>
+              <div className="color-indicators">
+                <span className="dot w"></span>
+                <span className="dot u"></span>
+                <span className="dot b"></span>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        <div className="view-all-link">
+          <Link href="/precon">Vedi tutti i precon →</Link>
         </div>
       </section>
 
-      {/* 2. Marquee carte */}
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...SHOWCASE, ...SHOWCASE].map((name, i) => (
-            <span key={i} className="marquee-item">
-              <img src={scry(name)} alt="" />
-              {name}
-            </span>
-          ))}
+      {/* Sezione Guide e Upgrade Pronti */}
+      <section className="content-section">
+        <div className="section-header-row">
+          <h3>GUIDE IN EVIDENZA</h3>
+          <h2>Mazzi e upgrade pronti</h2>
         </div>
-      </div>
 
-      {/* 3. Come funziona — 3 step */}
-      <section className="shell steps-section">
-        <p className="eyebrow">Come funziona</p>
-        <h2 className="steps-title">Tre passi. Nessuna AI.</h2>
-        <div className="steps">
-          <div className="step">
-            <span className="step-n">01</span>
-            <h3>Cerca</h3>
-            <p>Scegli il comandante del tuo precon o incolla la lista.</p>
-          </div>
-          <div className="step">
-            <span className="step-n">02</span>
-            <h3>Costruisci</h3>
-            <p>Budget in euro e numero di carte: EDHREC + Scryfall fanno il resto.</p>
-          </div>
-          <div className="step">
-            <span className="step-n">03</span>
-            <h3>Esporta</h3>
-            <p>Salva il mazzo, copia la lista, confronta su altri siti.</p>
-          </div>
+        <div className="decks-grid small">
+          <Link href="/mazzi/krenko" className="deck-card horizontal">
+            <div className="deck-card-image small placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Krenko – La Marea Goblin</h4>
+              <p>Krenko, Mob Boss</p>
+              <div.stats-tag>+4100 · 🎴 7</div.stats-tag>
+            </div>
+          </Link>
+
+          <Link href="/mazzi/elven-empire" className="deck-card horizontal">
+            <div className="deck-card-image small placeholder-img"></div>
+            <div className="deck-card-info">
+              <h4>Elven Empire – Upgrade</h4>
+              <p>Lathril, Blade of the Elves</p>
+              <div.stats-tag>+421 · 🎴 7</div.stats-tag>
+            </div>
+          </Link>
         </div>
-      </section>
-
-      {/* 4. Account */}
-      <section className="shell land-account-wrap">
-        <AuthButton variant="landing" />
-      </section>
-
-      {/* 5. Feature cards */}
-      <section className="shell land-features">
-        <Link href="/migliora" className="feature card-foil">
-          <h2>{t.landF1t}</h2>
-          <p>{t.landF1}</p>
-        </Link>
-        <Link href="/crea-mazzo" className="feature card-foil">
-          <h2>{t.landF2t}</h2>
-          <p>{t.landF2}</p>
-        </Link>
-        <Link href="/crea-mazzo" className="feature card-foil">
-          <h2>{t.landF3t}</h2>
-          <p>{t.landF3}</p>
-        </Link>
-        <Link href="/guida/come-funziona" className="feature card-foil">
-          <h2>{t.landF4t}</h2>
-          <p>{t.landF4}</p>
-        </Link>
       </section>
     </main>
   );
