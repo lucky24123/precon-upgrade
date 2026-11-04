@@ -61,36 +61,49 @@ export default function DeckDetail() {
           <button type="button" className="authbtn" onClick={() => navigator.clipboard.writeText(list)}>{t.copyDeck}</button>
           <label>{t.listToCopy}</label>
           <textarea readOnly value={list} />
-          {deck.origin === "upgrade" && <>
-            <h2>{t.possibleSwaps}</h2>
-            <p className="fine">{t.swapFine}</p>
-            {deck.snapshot?.swaps?.map((s: any, i: number) => (
-              <article className="swap" key={i}>
-                <div className="swap-grid">
-                  <div className="swap-side">
-                    <div className="pill remove">{t.remove} · {s.cut}</div>
-                    {s.cutImage && (
-                      <a className="card-picture" href={s.cutImage} target="_blank" rel="noreferrer">
-                        <img src={s.cutImage} alt={s.cut || ""} loading="lazy" />
-                      </a>
-                    )}
-                  </div>
-                  <div className="swap-side">
-                    <div className="pill add">{t.add} · {s.add}</div>
-                    {s.addImage && (
-                      <a className="card-picture" href={s.addImage} target="_blank" rel="noreferrer">
-                        <img src={s.addImage} alt={s.add || ""} loading="lazy" />
-                      </a>
-                    )}
-                    {s.priceEUR != null && (
-                      <p className="num">{Number(s.priceEUR).toFixed(2)} €</p>
-                    )}
-                  </div>
+          {deck.origin === "upgrade" && (
+            <>
+              <h2>{t.possibleSwaps}</h2>
+              <p className="fine">{t.swapFine}</p>
+              <div className="workspace">
+                <div className="swap-col swap-out">
+                  <h3>{t.remove}</h3>
+                  {deck.snapshot?.swaps?.map((s: any, i: number) =>
+                    s.cut ? (
+                      <div className="swap-item" key={"o"+i}>
+                        {s.cutImage && (
+                          <a className="card-picture" href={s.cutImage} target="_blank" rel="noreferrer">
+                            <img src={s.cutImage} alt="" />
+                          </a>
+                        )}
+                        <div>
+                          <strong>{s.cut}</strong>
+                          <div className="pill remove">{t.remove}</div>
+                        </div>
+                      </div>
+                    ) : null
+                  )}
                 </div>
-                {s.reason && <p className="swap-reason">{s.reason}</p>}
-              </article>
-            ))}
-          </>}
+                <div className="swap-col swap-in">
+                  <h3>{t.add}</h3>
+                  {deck.snapshot?.swaps?.map((s: any, i: number) => (
+                    <div className="swap-item" key={"i"+i}>
+                      {s.addImage && (
+                        <a className="card-picture" href={s.addImage} target="_blank" rel="noreferrer">
+                          <img src={s.addImage} alt="" />
+                        </a>
+                      )}
+                      <div>
+                        <strong>{s.add}</strong>
+                        {s.reason && <div className="reason">{s.reason}</div>}
+                        <span className="pill add">{t.add}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </section>
       )}
     </main>
