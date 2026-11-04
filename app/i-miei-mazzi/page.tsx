@@ -18,7 +18,15 @@ type Deck = {
   commander: string; 
   origin: string; 
   deck_cards: CardRow[];
-  snapshot?: { swaps?: { cut: string | null; add: string; reason: string; cutImage?: string; addImage?: string }[] } 
+  snapshot?: { 
+    swaps?: { 
+      cut: string | null; 
+      add: string; 
+      reason: string; 
+      cutImage?: string; 
+      addImage?: string 
+    }[] 
+  }; 
 };
 
 export default function DeckDetail() {
