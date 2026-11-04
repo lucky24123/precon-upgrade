@@ -14,7 +14,8 @@ interface CommanderOption {
 
 interface CardDetail {
   name: string;
-  price: string;
+  priceNum: number;
+  priceFormatted: string;
   type: string;
   image: string;
 }
@@ -28,18 +29,17 @@ function UpgradeContent() {
   const [currentCommanderData, setCurrentCommanderData] = useState<CommanderOption | null>(null);
   
   const [customList, setCustomList] = useState("");
-  const [activeTab, setActiveTab] = useState<"commanders" | "custom">("commanders");
+  const [budgetLimit, setBudgetLimit] = useState<number>(50); // Budget predefinito 50€
   
   const [isFetchingList, setIsFetchingList] = useState(true);
   const [isLoadingUpgrade, setIsLoadingUpgrade] = useState(false);
   const [scryfallData, setScryfallData] = useState<{ cuts: CardDetail[]; additions: CardDetail[] } | null>(null);
 
-  // 1. Carica TUTTI i Comandanti ufficiali da Scryfall
+  // 1. Carica TUTTI i Comandanti da Scryfall (A-Z)
   useEffect(() => {
     async function fetchAllCommanders() {
       setIsFetchingList(true);
       try {
-        // Query per recuperare tutte le creature leggendarie e Planeswalker usabili come Comandante
         const query = encodeURIComponent("is:commander legal:commander");
         const res = await fetch(`https://api.scryfall.com/cards/search?q=${query}&order=name`);
         const data = await res.json();
@@ -53,7 +53,6 @@ function UpgradeContent() {
             image: card.image_uris?.normal || card.image_uris?.small || (card.card_faces ? card.card_faces[0].image_uris?.normal : "")
           }));
 
-          // Ordina alfabeticamente A-Z
           formatted.sort((a, b) => a.name.localeCompare(b.name));
           setCommandersList(formatted);
 
@@ -64,7 +63,7 @@ function UpgradeContent() {
           }
         }
       } catch (err) {
-        console.error("Errore nel caricamento del catalogo comandanti:", err);
+        console.error("Errore catalogo comandanti:", err);
       } finally {
         setIsFetchingList(false);
       }
@@ -73,7 +72,6 @@ function UpgradeContent() {
     fetchAllCommanders();
   }, [initialCommander]);
 
-  // Aggiorna i dati quando l'utente seleziona un comandante diverso dal menu
   const handleCommanderChange = (name: string) => {
     setSelectedCommander(name);
     setScryfallData(null);
@@ -83,7 +81,7 @@ function UpgradeContent() {
     }
   };
 
-  // 2. Calcola Sostituzioni & Upgrade
+  // 2. Calcolo Upgrade basato su EDHREC, Scryfall e Budget
   const handleCalculateUpgrade = async () => {
     if (!selectedCommander) return;
     setIsLoadingUpgrade(true);
@@ -94,81 +92,122 @@ function UpgradeContent() {
         ? `id<=${currentCommanderData.colors.join("")}` 
         : "id<=c";
 
-      // Query Scryfall: carte ad alta sinergia EDHREC per questa identità di colore, escludendo il comandante
-      const query = encodeURIComponent(`f:commander ${colorQuery} -name:"${selectedCommander}"`);
-      const res = await fetch(`https://api.scryfall.com/cards/search?q=${query}&order=edhrec`);
+      // Interrogazione Scryfall con ordinamento EDHREC per le aggiunte
+      const additionsQuery = encodeURIComponent(`f:commander ${colorQuery} -name:"${selectedCommander.replace(/"/g, '\\"')}"`);
+      const res = await fetch(`https://api.scryfall.com/cards/search?q=${additionsQuery}&order=edhrec`);
       const data = await res.json();
 
+      let topAdditions: CardDetail[] = [];
+      let topCuts: CardDetail[] = [];
+
       if (data && data.data) {
-        const cleanAdditions = data.data.filter((c: any) => 
+        // Filtriamo carte valide, escludendo il comandante e le terre base
+        const cleanCards = data.data.filter((c: any) => 
           c.name.toLowerCase() !== selectedCommander.toLowerCase() &&
           !c.type_line.includes("Basic Land")
         );
 
-        const topAdditions: CardDetail[] = cleanAdditions.slice(0, 4).map((c: any) => ({
-          name: c.name,
-          price: c.prices?.eur ? `${c.prices.eur} €` : (c.prices?.usd ? `$${c.prices.usd}` : "0.50 €"),
-          type: c.type_line,
-          image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
-        }));
+        // Mappatura e filtraggio per budget in Euro
+        const mappedCards: CardDetail[] = cleanCards.map((c: any) => {
+          const eurPrice = c.prices?.eur ? parseFloat(c.prices.eur) : (c.prices?.usd ? parseFloat(c.prices.usd) * 0.92 : 0.50);
+          return {
+            name: c.name,
+            priceNum: isNaN(eurPrice) ? 0.50 : eurPrice,
+            priceFormatted: `${(isNaN(eurPrice) ? 0.50 : eurPrice).toFixed(2)} €`,
+            type: c.type_line,
+            image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
+          };
+        });
 
-        // Recupera le carte generiche meno usate / sub-ottimali per i tagli
-        const cutsQuery = encodeURIComponent(`f:commander ${colorQuery} type:artifact -name:"${selectedCommander}"`);
+        // Applichiamo il filtro del budget scelto dall'utente
+        const filteredByBudget = mappedCards.filter(c => c.priceNum <= budgetLimit);
+        topAdditions = (filteredByBudget.length > 0 ? filteredByBudget : mappedCards).slice(0, 6);
+      }
+
+      // Gestione Tagli (dalla lista incollata o generati coerentemente)
+      if (customList.trim().length > 0) {
+        const lines = customList.split("\n").map(l => l.replace(/^\d+x?\s*/, "").trim()).filter(Boolean);
+        const uniqueLines = Array.from(new Set(lines)).filter(n => n.toLowerCase() !== selectedCommander.toLowerCase());
+        
+        topCuts = await Promise.all(
+          uniqueLines.slice(0, 6).map(async (cardName) => {
+            try {
+              const cardRes = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
+              const cardJson = await cardRes.json();
+              const p = cardJson.prices?.eur ? parseFloat(cardJson.prices.eur) : 0.30;
+              return {
+                name: cardName,
+                priceNum: p,
+                priceFormatted: `${p.toFixed(2)} €`,
+                type: cardJson.type_line || "Carta nel mazzo",
+                image: cardJson.image_uris?.normal || cardJson.image_uris?.small || (cardJson.card_faces ? cardJson.card_faces[0].image_uris?.normal : "")
+              };
+            } catch {
+              return { name: cardName, priceNum: 0.20, priceFormatted: "0.20 €", type: "Carta", image: "" };
+            }
+          })
+        );
+      } else {
+        // Tagli automatici basati sulle carte a minore sinergia EDHREC
+        const cutsQuery = encodeURIComponent(`f:commander ${colorQuery} type:creature -name:"${selectedCommander.replace(/"/g, '\\"')}"`);
         const cutsRes = await fetch(`https://api.scryfall.com/cards/search?q=${cutsQuery}&order=edhrec&dir=asc`);
         const cutsData = await cutsRes.json();
 
-        let topCuts: CardDetail[] = [];
         if (cutsData && cutsData.data) {
-          topCuts = cutsData.data.slice(0, 4).map((c: any) => ({
-            name: c.name,
-            price: "Consigliata rimozione",
-            type: c.type_line,
-            image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
-          }));
+          topCuts = cutsData.data.slice(0, 6).map((c: any) => {
+            const p = c.prices?.eur ? parseFloat(c.prices.eur) : 0.25;
+            return {
+              name: c.name,
+              priceNum: p,
+              priceFormatted: `${p.toFixed(2)} €`,
+              type: c.type_line,
+              image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
+            };
+          });
         }
-
-        setScryfallData({ cuts: topCuts, additions: topAdditions });
       }
+
+      setScryfallData({ cuts: topCuts, additions: topAdditions });
     } catch (err) {
-      console.error("Errore nell'analisi degli upgrade:", err);
+      console.error("Errore nel calcolo dell'upgrade:", err);
     } finally {
       setIsLoadingUpgrade(false);
     }
   };
 
+  // Calcolo totale stimato del budget per le aggiunte selezionate
+  const totalAdditionsCost = scryfallData 
+    ? scryfallData.additions.reduce((acc, curr) => acc + curr.priceNum, 0).toFixed(2) 
+    : "0.00";
+
   return (
-    <section className="panel" style={{ marginTop: "30px" }}>
-      <div className="eyebrow">CATALOGO GLOBALE COMMANDER</div>
-      <h2>Database Completo Comandanti</h2>
+    <main className="shell">
+      <header>
+        <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
+          PRECON UPGRADE <span>NO AI</span>
+        </Link>
+        <div className="headright">
+          <Link href="/" className="authbtn ghostbtn">Home</Link>
+        </div>
+      </header>
 
-      <div style={{ display: "flex", gap: "10px", margin: "20px 0" }}>
-        <button 
-          onClick={() => { setActiveTab("commanders"); setScryfallData(null); }}
-          className={`cta ${activeTab === "commanders" ? "primary" : "ghost"}`}
-          style={{ cursor: "pointer" }}
-        >
-          Sfoglia Tutti i Comandanti
-        </button>
-        <button 
-          onClick={() => { setActiveTab("custom"); setScryfallData(null); }}
-          className={`cta ${activeTab === "custom" ? "primary" : "ghost"}`}
-          style={{ cursor: "pointer" }}
-        >
-          Incolla Lista Personalizzata
-        </button>
-      </div>
+      <section className="panel" style={{ marginTop: "30px" }}>
+        <div className="eyebrow">STRUMENTO UFFICIALE SCRYFALL & EDHREC</div>
+        <h2>Ottimizzazione Mazzo & Scelta Budget</h2>
+        <p style={{ color: "#aaa", fontSize: "14px", marginBottom: "20px" }}>
+          Nessuna intelligenza artificiale. Solo statistiche pure EDHREC, prezzi in tempo reale e controllo totale sul tuo budget.
+        </p>
 
-      {activeTab === "commanders" ? (
-        <div>
+        {/* Selezione Comandante */}
+        <div style={{ marginBottom: "20px" }}>
           <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-            Seleziona Comandante ({isFetchingList ? "Caricamento archivio in corso..." : `${commandersList.length} Comandanti Trovati`}):
+            Seleziona il Comandante ({isFetchingList ? "Caricamento archivio..." : `${commandersList.length} disponibili`}):
           </label>
-
           <select 
             value={selectedCommander} 
             disabled={isFetchingList}
             onChange={(e) => handleCommanderChange(e.target.value)}
-            style={{ width: "100%", padding: "12px", background: "#111", border: "1px solid #333", color: "#fff", borderRadius: "8px", fontSize: "16px", marginBottom: "20px" }}
+            style={{ width: "100%", padding: "12px", background: "#111", border: "1px solid #333", color: "#fff", borderRadius: "8px", fontSize: "16px" }}
           >
             {commandersList.map((cmd) => (
               <option key={cmd.name} value={cmd.name}>
@@ -176,108 +215,123 @@ function UpgradeContent() {
               </option>
             ))}
           </select>
-
-          {/* Scheda Comandante Selezionato */}
-          {currentCommanderData && (
-            <div style={{ display: "flex", gap: "20px", background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px", alignItems: "center" }}>
-              {currentCommanderData.image && (
-                <img src={currentCommanderData.image} alt={currentCommanderData.name} style={{ width: "120px", borderRadius: "8px", border: "1px solid #444" }} />
-              )}
-              <div>
-                <h3 style={{ margin: "0 0 8px 0", color: "var(--gold, #d4af37)" }}>{currentCommanderData.name}</h3>
-                <p style={{ margin: 0, color: "#aaa" }}><strong>Set:</strong> {currentCommanderData.set_name} ({currentCommanderData.set_code})</p>
-                <p style={{ margin: "4px 0 0", color: "#888", fontSize: "14px" }}>
-                  <strong>Colori:</strong> {currentCommanderData.colors.length > 0 ? currentCommanderData.colors.join(", ") : "Incolore"}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
-      ) : (
-        <div style={{ margin: "20px 0" }}>
-          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>Incolla la tua lista di carte:</label>
-          <textarea 
-            rows={8} 
-            value={customList}
-            onChange={(e) => { setCustomList(e.target.value); setScryfallData(null); }}
-            placeholder="1 Sol Ring&#10;1 Command Tower..." 
-            style={{ width: "100%", padding: "12px", background: "#111", border: "1px solid #333", color: "#fff", borderRadius: "8px", fontFamily: "monospace" }}
-          />
-        </div>
-      )}
 
-      {/* Pulsante di Calcolo */}
-      <button 
-        onClick={handleCalculateUpgrade}
-        disabled={isLoadingUpgrade || isFetchingList}
-        className="cta primary" 
-        style={{ width: "100%", border: "none", cursor: (isLoadingUpgrade || isFetchingList) ? "wait" : "pointer", padding: "14px", fontSize: "16px", opacity: (isLoadingUpgrade || isFetchingList) ? 0.7 : 1 }}
-      >
-        {isLoadingUpgrade ? "⚡ Calcolo Ottimizzazione & Foto Carte in corso..." : "Calcola Sostituzioni & Upgrade →"}
-      </button>
-
-      {/* Risultati Upgrade */}
-      {scryfallData && (
-        <div style={{ marginTop: "30px", background: "#111", padding: "20px", borderRadius: "10px", border: "1px solid var(--gold, #d4af37)" }}>
-          <h3 style={{ color: "var(--gold, #d4af37)", marginTop: 0 }}>📊 Report Ottimizzazione per {selectedCommander}</h3>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "20px" }}>
-            
-            {/* TAGLI */}
-            <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #ff6b6b" }}>
-              <h4 style={{ color: "#ff6b6b", marginTop: 0 }}>❌ Sostituzioni Consigliate:</h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {scryfallData.cuts.map((item, i) => (
-                  <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
-                    {item.image && <img src={item.image} alt={item.name} style={{ width: "50px", borderRadius: "4px" }} />}
-                    <div>
-                      <strong style={{ display: "block", color: "#fff", fontSize: "14px" }}>{item.name}</strong>
-                      <span style={{ color: "#aaa", fontSize: "12px" }}>{item.type}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Scheda del Comandante Selezionato */}
+        {currentCommanderData && (
+          <div style={{ display: "flex", gap: "20px", background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px", alignItems: "center" }}>
+            {currentCommanderData.image && (
+              <img src={currentCommanderData.image} alt={currentCommanderData.name} style={{ width: "110px", borderRadius: "8px", border: "1px solid #444" }} />
+            )}
+            <div>
+              <h3 style={{ margin: "0 0 6px 0", color: "var(--gold, #d4af37)" }}>{currentCommanderData.name}</h3>
+              <p style={{ margin: 0, color: "#aaa", fontSize: "14px" }}><strong>Set:</strong> {currentCommanderData.set_name} ({currentCommanderData.set_code})</p>
+              <p style={{ margin: "4px 0 0", color: "#888", fontSize: "13px" }}>
+                <strong>Identità di Colore:</strong> {currentCommanderData.colors.length > 0 ? currentCommanderData.colors.join(", ") : "Incolore"}
+              </p>
             </div>
+          </div>
+        )}
 
-            {/* AGGIUNTE */}
-            <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #51cf66" }}>
-              <h4 style={{ color: "#51cf66", marginTop: 0 }}>✅ Carte Consigliate (EDHREC Top):</h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {scryfallData.additions.map((item, i) => (
-                  <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
-                    {item.image && <img src={item.image} alt={item.name} style={{ width: "50px", borderRadius: "4px" }} />}
-                    <div>
-                      <strong style={{ display: "block", color: "#fff", fontSize: "14px" }}>{item.name}</strong>
-                      <span style={{ color: "var(--gold, #d4af37)", fontSize: "12px" }}>{item.price}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
+        {/* Selezione Budget */}
+        <div style={{ background: "#111", padding: "16px", borderRadius: "8px", border: "1px solid #333", marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold", color: "var(--gold, #d4af37)" }}>
+            Budget Massimo per l'Upgrade: <span style={{ color: "#fff" }}>{budgetLimit === 9999 ? "Illimitato" : `${budgetLimit} €`}</span>
+          </label>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            {[15, 30, 50, 100, 9999].map((b) => (
+              <button
+                key={b}
+                onClick={() => setBudgetLimit(b)}
+                className={`cta ${budgetLimit === b ? "primary" : "ghost"}`}
+                style={{ padding: "8px 16px", fontSize: "14px", cursor: "pointer" }}
+              >
+                {b === 9999 ? "Illimitato" : `${b} €`}
+              </button>
+            ))}
           </div>
         </div>
-      )}
 
-      <div style={{ marginTop: "20px" }}>
-        <Link href="/" className="cta ghost">← Torna alla Home</Link>
-      </div>
-    </section>
+        {/* Casella per incollare il mazzo (per personalizzare i tagli) */}
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+            Incolla la tua lista di carte (facoltativo, per personalizzare i tagli):
+          </label>
+          <textarea 
+            rows={5} 
+            value={customList}
+            onChange={(e) => setCustomList(e.target.value)}
+            placeholder="1 Sol Ring&#10;1 Command Tower&#10;1 Swords to Plowshares..." 
+            style={{ width: "100%", padding: "12px", background: "#111", border: "1px solid #333", color: "#fff", borderRadius: "8px", fontFamily: "monospace", fontSize: "13px" }}
+          />
+        </div>
+
+        {/* Pulsante Calcola */}
+        <button 
+          onClick={handleCalculateUpgrade}
+          disabled={isLoadingUpgrade || isFetchingList}
+          className="cta primary" 
+          style={{ width: "100%", border: "none", cursor: (isLoadingUpgrade || isFetchingList) ? "wait" : "pointer", padding: "14px", fontSize: "16px", opacity: (isLoadingUpgrade || isFetchingList) ? 0.7 : 1 }}
+        >
+          {isLoadingUpgrade ? "⚡ Elaborazione dati Scryfall & EDHREC..." : "Calcola Sostituzioni & Upgrade →"}
+        </button>
+
+        {/* Risultati e Tabella dei Cambi */}
+        {scryfallData && (
+          <div style={{ marginTop: "30px", background: "#111", padding: "20px", borderRadius: "10px", border: "1px solid var(--gold, #d4af37)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+              <h3 style={{ color: "var(--gold, #d4af37)", margin: 0 }}>📊 Report Modifiche per {selectedCommander}</h3>
+              <span style={{ background: "#222", padding: "6px 12px", borderRadius: "6px", fontSize: "14px", color: "#51cf66", border: "1px solid #333" }}>
+                Spesa stimata acquisti: <strong>{totalAdditionsCost} €</strong>
+              </span>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "15px" }}>
+              
+              {/* TAGLI (DA RIMUOVERE) */}
+              <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #ff6b6b" }}>
+                <h4 style={{ color: "#ff6b6b", marginTop: 0 }}>❌ Carte da Rimuovere (Tagli):</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {scryfallData.cuts.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
+                      {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ display: "block", color: "#fff", fontSize: "13px" }}>{item.name}</strong>
+                        <span style={{ color: "#aaa", fontSize: "11px" }}>{item.priceFormatted} · {item.type}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AGGIUNTE (DA INSERIRE) */}
+              <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #51cf66" }}>
+                <h4 style={{ color: "#51cf66", marginTop: 0 }}>✅ Carte da Inserire (EDHREC Top):</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {scryfallData.additions.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
+                      {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ display: "block", color: "#fff", fontSize: "13px" }}>{item.name}</strong>
+                        <span style={{ color: "var(--gold, #d4af37)", fontSize: "11px" }}>{item.priceFormatted} · {item.type}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
 
 export default function UpgradePage() {
   return (
-    <main className="shell">
-      <header>
-        <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
-          PRECON UPGRADE <span>NO AI</span>
-        </Link>
-      </header>
-
-      <Suspense fallback={<div className="panel" style={{ marginTop: "30px" }}>Caricamento catalogo...</div>}>
-        <UpgradeContent />
-      </Suspense>
-    </main>
+    <Suspense fallback={<div className="shell" style={{ color: "#fff", padding: "40px" }}>Caricamento modulo upgrade...</div>}>
+      <UpgradeContent />
+    </Suspense>
   );
 }
