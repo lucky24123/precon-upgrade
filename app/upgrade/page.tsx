@@ -83,7 +83,7 @@ function UpgradeContent() {
 
   const currentDeck = COMMANDERS_DATA[selectedCommander] || COMMANDERS_DATA["Giada, Font of Hope"];
 
-  // Fetch dell'immagine del Comandante all'avvio/cambio
+  // Fetch immagine comandante
   useEffect(() => {
     async function fetchCommanderImg() {
       try {
@@ -106,25 +106,25 @@ function UpgradeContent() {
     setScryfallData(null);
 
     try {
-      // 1. Cercare carte raccomandate da Scryfall per questo Comandante
       const query = encodeURIComponent(`commander:${selectedCommander} legal:commander`);
       const res = await fetch(`https://api.scryfall.com/cards/search?q=${query}&order=edhrec`);
       const data = await res.json();
 
       if (data && data.data) {
-        // Estrazione Aggiunte con Foto e Prezzi
-        const topAdditions: CardDetail[] = data.data.slice(0, 4).map((c: any) => ({
+        // Filtriamo via il comandante stesso dai risultati di Scryfall per evitare doppioni nelle aggiunte
+        const filteredCards = data.data.filter((c: any) => c.name.toLowerCase() !== selectedCommander.toLowerCase());
+
+        const topAdditions: CardDetail[] = filteredCards.slice(0, 4).map((c: any) => ({
           name: c.name,
           price: c.prices?.eur ? `${c.prices.eur} €` : (c.prices?.usd ? `$${c.prices.usd}` : "N/D"),
           type: c.type_line,
           image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
         }));
 
-        // Estrazione Tagli reali presi dalla lista attuale del mazzo (escludendo il comandante)
         const currentCards = currentDeck.cards.filter(([name]) => name !== selectedCommander);
-        const cuts: CardDetail[] = currentCards.slice(1, 4).map(([name]) => ({
+        const cuts: CardDetail[] = currentCards.slice(0, 4).map(([name]) => ({
           name,
-          price: "Sostituzione raccomandata",
+          price: "Sostituzione consigliata",
           type: "Mazzo di Partenza",
           image: `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image`
         }));
@@ -148,7 +148,6 @@ function UpgradeContent() {
       <div className="eyebrow">SCRYFALL & EDHREC CONNECTED</div>
       <h2>Ottimizzazione per Comandante</h2>
 
-      {/* Tabs */}
       <div style={{ display: "flex", gap: "10px", margin: "20px 0" }}>
         <button 
           onClick={() => { setActiveTab("commanders"); setScryfallData(null); }}
@@ -181,7 +180,6 @@ function UpgradeContent() {
             ))}
           </select>
 
-          {/* Scheda Comandante con FOTO UFFICIALE */}
           <div style={{ display: "flex", gap: "20px", background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px", alignItems: "center" }}>
             {commanderImage && (
               <img src={commanderImage} alt={selectedCommander} style={{ width: "120px", borderRadius: "8px", border: "1px solid #444" }} />
@@ -206,7 +204,6 @@ function UpgradeContent() {
         </div>
       )}
 
-      {/* Tasto Calcola */}
       <button 
         onClick={handleCalculateUpgrade}
         disabled={isLoading}
@@ -216,14 +213,13 @@ function UpgradeContent() {
         {isLoading ? "⚡ Caricamento Immagini e Analisi Scryfall..." : "Calcola Sostituzioni & Upgrade (Con Foto Carte) →"}
       </button>
 
-      {/* RISULTATI CON FOTO E CAMBI REALI */}
       {scryfallData && (
         <div style={{ marginTop: "30px", background: "#111", padding: "20px", borderRadius: "10px", border: "1px solid var(--gold, #d4af37)" }}>
           <h3 style={{ color: "var(--gold, #d4af37)", marginTop: 0 }}>📊 Suggerimenti Cambio Carte per {selectedCommander}</h3>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "20px" }}>
             
-            {/* SEZIONE TAGLI */}
+            {/* TAGLI */}
             <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #ff6b6b" }}>
               <h4 style={{ color: "#ff6b6b", marginTop: 0 }}>❌ Carte da Rimuovere:</h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -239,7 +235,7 @@ function UpgradeContent() {
               </div>
             </div>
 
-            {/* SEZIONE AGGIUNTE */}
+            {/* AGGIUNTE */}
             <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #51cf66" }}>
               <h4 style={{ color: "#51cf66", marginTop: 0 }}>✅ Carte consigliate da Inserire:</h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
