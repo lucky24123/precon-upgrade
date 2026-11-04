@@ -4,17 +4,16 @@ import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
 
-
 export default function Landing() {
   const { t } = useLang();
   return (
     <main className="landing">
-      <section className="land-hero">
+      <section className="land-hero land-hero-clean">
         <picture>
           <source media="(max-width: 700px)" srcSet="/hero-mazzo-960.webp" />
           <img src="/hero-mazzo.webp" alt={t.landImgAlt} fetchPriority="high" />
         </picture>
-        <div className="land-shade" />
+        <div className="land-shade land-shade-clean" />
         <div className="land-inner">
           <header className="land-head">
             <Link href="/" className="brand">
@@ -26,7 +25,8 @@ export default function Landing() {
               <InstagramLink />
             </div>
           </header>
-          <div className="land-copy">
+
+          <div className="land-copy land-copy-clean">
             <p className="land-kicker">{t.landKicker}</p>
             <h1>
               {t.landTitle1}
@@ -46,33 +46,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="shell steps-section">
-        <p className="eyebrow">Come funziona</p>
-        <h2 className="steps-title">Tre passi. Nessuna AI.</h2>
-        <div className="steps">
-          <div className="step">
-            <span className="step-n">01</span>
-            <h3>Cerca</h3>
-            <p>Scegli il comandante del tuo precon o incolla la lista.</p>
-          </div>
-          <div className="step">
-            <span className="step-n">02</span>
-            <h3>Costruisci</h3>
-            <p>Budget in euro e numero di carte: EDHREC + Scryfall fanno il resto.</p>
-          </div>
-          <div className="step">
-            <span className="step-n">03</span>
-            <h3>Esporta</h3>
-            <p>Salva il mazzo, copia la lista, confronta su altri siti.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="shell land-account-wrap">
-        <AuthButton variant="landing" />
-      </section>
-
-      <section className="shell land-features">
+      <section className="shell land-features land-features-clean">
         <Link href="/migliora" className="feature card-foil">
           <h2>{t.landF1t}</h2>
           <p>{t.landF1}</p>
@@ -89,6 +63,10 @@ export default function Landing() {
           <h2>{t.landF4t}</h2>
           <p>{t.landF4}</p>
         </Link>
+      </section>
+
+      <section className="shell land-account-wrap">
+        <AuthButton variant="landing" />
       </section>
     </main>
   );
