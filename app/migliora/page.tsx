@@ -37,10 +37,25 @@ function CardPicture({ src, name }: { src: string | null; name: string }) {
   const { t } = useLang();
   const [failed, F] = useState(false);
   return !src || failed ? (
-    <p className="fine">{t.imageMissing}: {name}</p>
+    <p>
+      {t.imageMissing}: {name}
+    </p>
   ) : (
-    <a href={src} target="_blank" rel="noreferrer" className="card-picture card-foil">
-      <img src={src} alt={name} loading="lazy" onError={() => F(true)} />
+    <a href={src} target="_blank" rel="noreferrer">
+      <img
+        src={src}
+        alt={name}
+        loading="lazy"
+        onError={() => F(true)}
+        style={{
+          width: "100%",
+          maxWidth: 220,
+          height: "auto",
+          borderRadius: 12,
+          display: "block",
+          margin: "12px auto",
+        }}
+      />
     </a>
   );
 }
@@ -208,12 +223,12 @@ export default function Home() {
                 </select>
               )}
               {deck !== auto.current && (
-                <button type="button" className="btn-tap" onClick={() => usePrecon(pick)}>
+                <button type="button" onClick={() => usePrecon(pick)}>
                   {t.preconUse}
                 </button>
               )}
               {deck.trim() !== "" && (
-                <button type="button" className="secondary btn-tap" onClick={clearDeck}>
+                <button type="button" className="secondary" onClick={clearDeck}>
                   {t.preconClear}
                 </button>
               )}
@@ -249,7 +264,6 @@ export default function Home() {
           </div>
         </div>
         <button
-          className="btn-tap"
           disabled={busy || !commander.trim() || !deck.trim()}
           onClick={run}
         >
@@ -260,126 +274,96 @@ export default function Home() {
       </section>
       {result && (
         <>
-          <section className="panel result-hero">
-            <div className="commander-result">
-              <CardPicture
-                key={result.commanderImage}
-                src={result.commanderImage}
-                name={result.commander}
-              />
-              <div style={{ flex: 1, minWidth: 200 }}>
+          <section className="panel">
+            <SaveDeck key={JSON.stringify(result.input)} payload={{
+              title: `${result.commander} · upgrade`, commander: result.commander, origin: "upgrade",
+              budget_cents: result.input.budget.trim() ? Math.round(Number(result.input.budget.replace(",", ".")) * 100) : null,
+              cards: result.cards, input: result.input, result,
+            }} />
+            <div className="top">
+              <div>
                 <label>{t.done}</label>
                 <h2>{result.commander}</h2>
-                <small>{t.recognized(result.deckCount, result.total)}</small>
-                <div className="stat-row">
-                  <div className="stat-tile">
-                    <div className="label">{t.possibleSwaps}</div>
-                    <div className="value">{result.swaps.length}</div>
-                  </div>
-                  <div className="stat-tile">
-                    <div className="label">€</div>
-                    <div className="value">{result.totalPriceEUR.toFixed(0)}</div>
-                  </div>
-                </div>
-                {result.missing.length > 0 && (
-                  <p className="notice">{t.notRecognized(result.missing.join(", "))}</p>
-                )}
-                {result.selectionNotice && (
-                  <p className="notice">{result.selectionNotice}</p>
-                )}
+                <CardPicture
+                  key={result.commanderImage}
+                  src={result.commanderImage}
+                  name={result.commander}
+                />
               </div>
+              <small>{t.recognized(result.deckCount, result.total)}</small>
             </div>
-            <SaveDeck
-              payload={{
-                title: `${result.commander} · upgrade`,
-                commander: result.commander,
-                origin: "upgrade",
-                budget_cents: result.input.budget.trim()
-                  ? Math.round(Number(result.input.budget.replace(",", ".")) * 100)
-                  : null,
-                cards: result.cards,
-                input: result.input,
-                result,
-              }}
-            />
-          </section>
-
-          <p className="fine" style={{ margin: "8px 0 16px" }}>{t.swapFine}</p>
-
-          {/* Struttura OUT | IN come il sito demo */}
-          <div className="workspace">
-            <div className="swap-col swap-out">
-              <h3>{t.remove}</h3>
-              {result.swaps.map((s, i) =>
-                s.cut ? (
-                  <div className="swap-item" key={`out-${i}`}>
-                    <CardPicture src={s.cutImage} name={s.cut} />
-                    <div>
-                      <strong>{s.cut}</strong>
-                      <div className="reason">
-                        {s.cutSynergy !== null && Number.isFinite(s.cutSynergy)
-                          ? `${t.cutScore}: ${pct(s.cutSynergy)}`
-                          : ""}
-                      </div>
-                      <span className="pill remove">{t.remove}</span>
-                    </div>
-                  </div>
-                ) : null
-              )}
-            </div>
-            <div className="swap-col swap-in">
-              <h3>{t.add}</h3>
-              {result.swaps.map((s, i) => (
-                <div className="swap-item" key={`in-${i}`}>
-                  <CardPicture src={s.addImage} name={s.add} />
+            {result.missing.length > 0 && (
+              <p className="notice">
+                {t.notRecognized(result.missing.join(", "))}
+              </p>
+            )}
+            <h3>{t.possibleSwaps}</h3>
+            <p>
+              {t.swapsCount(result.swaps.length)} ·{" "}
+              {result.priceComplete ? t.estTotal : t.knownSubtotal}:{" "}
+              {result.totalPriceEUR.toFixed(2)} €
+            </p>
+            {result.selectionNotice && (
+              <p className="notice">{result.selectionNotice}</p>
+            )}
+            <p className="fine">{t.swapFine}</p>
+            {result.swaps.map((s, i) => (
+              <article className="swap" key={i}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fit,minmax(min(100%,220px),1fr))",
+                    gap: 20,
+                  }}
+                >
                   <div>
-                    <strong>{s.add}</strong>
-                    <div className="reason">
-                      {s.reason}
-                      {s.manaNote ? ` ${s.manaNote}` : ""}
+                    <div className="pill remove">
+                      {t.remove} · {s.cut}
                     </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
-                      {s.role && <span className="role-tag">{s.role}</span>}
-                      <span className="pill add">
-                        {s.priceEUR === null ? t.na : `${s.priceEUR.toFixed(2)} €`}
-                      </span>
+                    <CardPicture
+                      key={s.cutImage}
+                      src={s.cutImage}
+                      name={s.cut || t.cardToRemove}
+                    />
+                  </div>
+                  <div>
+                    <div className="pill add">
+                      {t.add} · {s.add}
                     </div>
-                    <small>
-                      EDHREC: {Number.isFinite(s.addSynergy) ? pct(s.addSynergy) : "n/d"} ·{" "}
-                      {t.inclusion}:{" "}
-                      {Number.isFinite(s.addInclusion) && s.addInclusion > 0
-                        ? `${Math.round(s.addInclusion * 100)}%`
-                        : "n/d"}
-                    </small>
+                    <CardPicture
+                      key={s.addImage}
+                      src={s.addImage}
+                      name={s.add}
+                    />
+                    <p>
+                      {t.estPrice}:{" "}
+                      {s.priceEUR === null
+                        ? t.na
+                        : `${s.priceEUR.toFixed(2)} €`}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <section className="panel" style={{ marginTop: 28 }}>
-            <h2>{t.add}</h2>
-            <div className="card-grid">
-              {result.swaps.map((s, i) =>
-                s.addImage ? (
-                  <div className="card-tile" key={`g-${i}`}>
-                    <img src={s.addImage} alt={s.add} loading="lazy" />
-                    <div className="overlay" />
-                    {s.role && <span className="role-chip">{s.role}</span>}
-                    <div className="meta">
-                      <div className="name">{s.add}</div>
-                      <div className="price">
-                        {s.priceEUR === null ? t.na : `${s.priceEUR.toFixed(2)} €`}
-                      </div>
-                    </div>
-                  </div>
-                ) : null
-              )}
-            </div>
+                {s.role && <p className="role-tag">{s.role}</p>}
+                <p>
+                  {s.reason}
+                  {s.manaNote ? ` ${s.manaNote}` : ""}
+                </p>
+                <small>
+                  EDHREC synergy:{" "}
+                  {Number.isFinite(s.addSynergy) ? pct(s.addSynergy) : "n/d"} ·{" "}
+                  {t.inclusion}:{" "}
+                  {Number.isFinite(s.addInclusion) && s.addInclusion > 0
+                    ? `${Math.round(s.addInclusion * 100)}%`
+                    : "n/d"}
+                  {s.cutSynergy !== null
+                    ? ` · ${t.cutScore}: ${Number.isFinite(s.cutSynergy) ? pct(s.cutSynergy) : "n/d"}`
+                    : ""}
+                </small>
+              </article>
+            ))}
+            <p className="notice">{result.warning}</p>
           </section>
-
-          {result.warning && <p className="notice">{result.warning}</p>}
-
           <section className="panel">
             <h2>{t.compareSites}</h2>
             <div className="links">
@@ -392,7 +376,6 @@ export default function Home() {
           </section>
         </>
       )}
-
       <footer>
         <p>{t.homeFooter1}</p>
         <p>Impact-Site-Verification: 168e23d6-e6b9-455a-9c91-4d8c3bec6e4f</p>
