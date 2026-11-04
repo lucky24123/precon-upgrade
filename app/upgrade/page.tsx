@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-// Database Comandanti e Liste Precon
+// Database Comandanti e Liste Precon Reali
 const COMMANDERS_DATA: Record<string, { name: string; preconName: string; code: string; date: string; cards: [string, number][] }> = {
   "Giada, Font of Hope": {
     name: "Giada, Font of Hope", preconName: "Calling All Angels", code: "FDC", date: "2026-10-02",
@@ -60,6 +60,7 @@ interface CardDetail {
   name: string;
   price: string;
   type: string;
+  image: string;
 }
 
 function UpgradeContent() {
@@ -70,8 +71,8 @@ function UpgradeContent() {
   const [customList, setCustomList] = useState("");
   const [activeTab, setActiveTab] = useState<"commanders" | "custom">("commanders");
   
-  // Stati per la chiamata API reale
   const [isLoading, setIsLoading] = useState(false);
+  const [commanderImage, setCommanderImage] = useState<string | null>(null);
   const [scryfallData, setScryfallData] = useState<{ cuts: CardDetail[]; additions: CardDetail[] } | null>(null);
 
   useEffect(() => {
@@ -82,39 +83,60 @@ function UpgradeContent() {
 
   const currentDeck = COMMANDERS_DATA[selectedCommander] || COMMANDERS_DATA["Giada, Font of Hope"];
 
-  // Funzione per interrogare l'API di Scryfall al click
+  // Fetch dell'immagine del Comandante all'avvio/cambio
+  useEffect(() => {
+    async function fetchCommanderImg() {
+      try {
+        const res = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(selectedCommander)}`);
+        const data = await res.json();
+        if (data && data.image_uris) {
+          setCommanderImage(data.image_uris.normal || data.image_uris.small);
+        } else if (data && data.card_faces) {
+          setCommanderImage(data.card_faces[0].image_uris.normal);
+        }
+      } catch (e) {
+        setCommanderImage(null);
+      }
+    }
+    fetchCommanderImg();
+  }, [selectedCommander]);
+
   const handleCalculateUpgrade = async () => {
     setIsLoading(true);
     setScryfallData(null);
 
     try {
-      // Interroghiamo Scryfall per ottenere carte reali sinergiche col comandante
+      // 1. Cercare carte raccomandate da Scryfall per questo Comandante
       const query = encodeURIComponent(`commander:${selectedCommander} legal:commander`);
       const res = await fetch(`https://api.scryfall.com/cards/search?q=${query}&order=edhrec`);
       const data = await res.json();
 
       if (data && data.data) {
+        // Estrazione Aggiunte con Foto e Prezzi
         const topAdditions: CardDetail[] = data.data.slice(0, 4).map((c: any) => ({
           name: c.name,
           price: c.prices?.eur ? `${c.prices.eur} €` : (c.prices?.usd ? `$${c.prices.usd}` : "N/D"),
-          type: c.type_line
+          type: c.type_line,
+          image: c.image_uris?.normal || c.image_uris?.small || (c.card_faces ? c.card_faces[0].image_uris?.normal : "")
         }));
 
-        const cuts: CardDetail[] = [
-          { name: "Terre base in eccesso", price: "0.05 €", type: "Basic Land" },
-          { name: "Sferadi Mana inefficienti (>3 CMC)", price: "0.15 €", type: "Artifact" },
-          { name: "Rimozioni lente ad alto costo", price: "0.20 €", type: "Spell" }
-        ];
+        // Estrazione Tagli reali presi dalla lista attuale del mazzo (escludendo il comandante)
+        const currentCards = currentDeck.cards.filter(([name]) => name !== selectedCommander);
+        const cuts: CardDetail[] = currentCards.slice(1, 4).map(([name]) => ({
+          name,
+          price: "Sostituzione raccomandata",
+          type: "Mazzo di Partenza",
+          image: `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image`
+        }));
 
         setScryfallData({ cuts, additions: topAdditions });
       } else {
-        throw new Error("Nessun dato trovato");
+        throw new Error("Nessun dato");
       }
     } catch (err) {
-      // Fallback con dati di sicurezza se Scryfall non risponde
       setScryfallData({
-        cuts: [{ name: "Carta a basso impatto", price: "0.10 €", type: "Spell" }],
-        additions: [{ name: "Lightning Greaves", price: "1.50 €", type: "Artifact" }, { name: "Arcane Signet", price: "0.40 €", type: "Artifact" }]
+        cuts: [{ name: "Carta a basso impatto", price: "0.10 €", type: "Spell", image: "" }],
+        additions: [{ name: "Sol Ring", price: "1.50 €", type: "Artifact", image: "" }]
       });
     } finally {
       setIsLoading(false);
@@ -126,7 +148,7 @@ function UpgradeContent() {
       <div className="eyebrow">SCRYFALL & EDHREC CONNECTED</div>
       <h2>Ottimizzazione per Comandante</h2>
 
-      {/* Selettore Modalità */}
+      {/* Tabs */}
       <div style={{ display: "flex", gap: "10px", margin: "20px 0" }}>
         <button 
           onClick={() => { setActiveTab("commanders"); setScryfallData(null); }}
@@ -159,9 +181,16 @@ function UpgradeContent() {
             ))}
           </select>
 
-          <div style={{ background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px" }}>
-            <h3 style={{ margin: "0 0 8px 0", color: "var(--gold, #d4af37)" }}>{currentDeck.name}</h3>
-            <p style={{ margin: 0, color: "#aaa" }}><strong>Precon d'origine:</strong> {currentDeck.preconName}</p>
+          {/* Scheda Comandante con FOTO UFFICIALE */}
+          <div style={{ display: "flex", gap: "20px", background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px", alignItems: "center" }}>
+            {commanderImage && (
+              <img src={commanderImage} alt={selectedCommander} style={{ width: "120px", borderRadius: "8px", border: "1px solid #444" }} />
+            )}
+            <div>
+              <h3 style={{ margin: "0 0 8px 0", color: "var(--gold, #d4af37)" }}>{currentDeck.name}</h3>
+              <p style={{ margin: 0, color: "#aaa" }}><strong>Precon d'origine:</strong> {currentDeck.preconName}</p>
+              <p style={{ margin: "4px 0 0", color: "#888", fontSize: "14px" }}>Set: {currentDeck.code} · Rilasciato: {currentDeck.date}</p>
+            </div>
           </div>
         </div>
       ) : (
@@ -177,44 +206,55 @@ function UpgradeContent() {
         </div>
       )}
 
-      {/* PULSANTE DI CALCOLO CON COLLEGAMENTO REALE */}
+      {/* Tasto Calcola */}
       <button 
         onClick={handleCalculateUpgrade}
         disabled={isLoading}
         className="cta primary" 
         style={{ width: "100%", border: "none", cursor: isLoading ? "wait" : "pointer", padding: "14px", fontSize: "16px", opacity: isLoading ? 0.7 : 1 }}
       >
-        {isLoading ? "⚡ Interrogazione Scryfall & EDHREC..." : "Calcola Sostituzioni & Upgrade (Scryfall API) →"}
+        {isLoading ? "⚡ Caricamento Immagini e Analisi Scryfall..." : "Calcola Sostituzioni & Upgrade (Con Foto Carte) →"}
       </button>
 
-      {/* RISULTATI DINAMICI DALLE API */}
+      {/* RISULTATI CON FOTO E CAMBI REALI */}
       {scryfallData && (
         <div style={{ marginTop: "30px", background: "#111", padding: "20px", borderRadius: "10px", border: "1px solid var(--gold, #d4af37)" }}>
-          <h3 style={{ color: "var(--gold, #d4af37)", marginTop: 0 }}>📊 Report Upgrade Reale per {selectedCommander}</h3>
-          <p style={{ color: "#ccc", fontSize: "14px" }}>Dati recuperati in tempo reale dall'API Scryfall e sinergie EDHREC.</p>
+          <h3 style={{ color: "var(--gold, #d4af37)", marginTop: 0 }}>📊 Suggerimenti Cambio Carte per {selectedCommander}</h3>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginTop: "15px" }}>
-            <div style={{ background: "#1a1a1a", padding: "12px", borderRadius: "6px", borderLeft: "4px solid #ff6b6b" }}>
-              <strong style={{ color: "#ff6b6b" }}>Consigliati da Tagliare:</strong>
-              <ul style={{ margin: "8px 0 0 0", paddingLeft: "18px", color: "#bbb", fontSize: "14px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "20px" }}>
+            
+            {/* SEZIONE TAGLI */}
+            <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #ff6b6b" }}>
+              <h4 style={{ color: "#ff6b6b", marginTop: 0 }}>❌ Carte da Rimuovere:</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {scryfallData.cuts.map((item, i) => (
-                  <li key={i} style={{ marginBottom: "6px" }}>
-                    {item.name} <span style={{ color: "#666" }}>({item.price})</span>
-                  </li>
+                  <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
+                    {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                    <div>
+                      <strong style={{ display: "block", color: "#fff", fontSize: "14px" }}>{item.name}</strong>
+                      <span style={{ color: "#aaa", fontSize: "12px" }}>{item.price}</span>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
 
-            <div style={{ background: "#1a1a1a", padding: "12px", borderRadius: "6px", borderLeft: "4px solid #51cf66" }}>
-              <strong style={{ color: "#51cf66" }}>Consigliati da Aggiungere:</strong>
-              <ul style={{ margin: "8px 0 0 0", paddingLeft: "18px", color: "#bbb", fontSize: "14px" }}>
+            {/* SEZIONE AGGIUNTE */}
+            <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #51cf66" }}>
+              <h4 style={{ color: "#51cf66", marginTop: 0 }}>✅ Carte consigliate da Inserire:</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {scryfallData.additions.map((item, i) => (
-                  <li key={i} style={{ marginBottom: "6px" }}>
-                    <strong>{item.name}</strong> — <span style={{ color: "var(--gold, #d4af37)" }}>{item.price}</span>
-                  </li>
+                  <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
+                    {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                    <div>
+                      <strong style={{ display: "block", color: "#fff", fontSize: "14px" }}>{item.name}</strong>
+                      <span style={{ color: "var(--gold, #d4af37)", fontSize: "12px" }}>{item.price}</span>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
+
           </div>
         </div>
       )}
