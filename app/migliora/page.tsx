@@ -37,25 +37,10 @@ function CardPicture({ src, name }: { src: string | null; name: string }) {
   const { t } = useLang();
   const [failed, F] = useState(false);
   return !src || failed ? (
-    <p>
-      {t.imageMissing}: {name}
-    </p>
+    <p className="fine">{t.imageMissing}: {name}</p>
   ) : (
-    <a href={src} target="_blank" rel="noreferrer" className="card-foil" style={{ display: "block" }}>
-      <img
-        src={src}
-        alt={name}
-        loading="lazy"
-        onError={() => F(true)}
-        style={{
-          width: "100%",
-          maxWidth: 220,
-          height: "auto",
-          borderRadius: 12,
-          display: "block",
-          margin: "12px auto",
-        }}
-      />
+    <a href={src} target="_blank" rel="noreferrer" className="card-picture card-foil">
+      <img src={src} alt={name} loading="lazy" onError={() => F(true)} />
     </a>
   );
 }
@@ -281,7 +266,7 @@ export default function Home() {
               budget_cents: result.input.budget.trim() ? Math.round(Number(result.input.budget.replace(",", ".")) * 100) : null,
               cards: result.cards, input: result.input, result,
             }} />
-            <div className="top">
+            <div className="top commander-result">
               <div>
                 <label>{t.done}</label>
                 <h2>{result.commander}</h2>
@@ -291,7 +276,19 @@ export default function Home() {
                   name={result.commander}
                 />
               </div>
-              <small>{t.recognized(result.deckCount, result.total)}</small>
+              <div>
+                <div className="stat-row">
+                  <div className="stat-tile">
+                    <div className="label">Carte</div>
+                    <div className="value">{result.swaps.length}</div>
+                  </div>
+                  <div className="stat-tile">
+                    <div className="label">€</div>
+                    <div className="value">{result.totalPriceEUR.toFixed(0)}</div>
+                  </div>
+                </div>
+                <small>{t.recognized(result.deckCount, result.total)}</small>
+              </div>
             </div>
             {result.missing.length > 0 && (
               <p className="notice">
@@ -310,15 +307,8 @@ export default function Home() {
             <p className="fine">{t.swapFine}</p>
             {result.swaps.map((s, i) => (
               <article className="swap" key={i}>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fit,minmax(min(100%,220px),1fr))",
-                    gap: 20,
-                  }}
-                >
-                  <div>
+                <div className="swap-grid">
+                  <div className="swap-side">
                     <div className="pill remove">
                       {t.remove} · {s.cut}
                     </div>
@@ -328,7 +318,7 @@ export default function Home() {
                       name={s.cut || t.cardToRemove}
                     />
                   </div>
-                  <div>
+                  <div className="swap-side">
                     <div className="pill add">
                       {t.add} · {s.add}
                     </div>
@@ -337,7 +327,7 @@ export default function Home() {
                       src={s.addImage}
                       name={s.add}
                     />
-                    <p>
+                    <p className="num">
                       {t.estPrice}:{" "}
                       {s.priceEUR === null
                         ? t.na
@@ -346,7 +336,7 @@ export default function Home() {
                   </div>
                 </div>
                 {s.role && <p className="role-tag">{s.role}</p>}
-                <p>
+                <p className="swap-reason">
                   {s.reason}
                   {s.manaNote ? ` ${s.manaNote}` : ""}
                 </p>
