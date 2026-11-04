@@ -85,7 +85,6 @@ function UpgradeContent() {
 
   const currentDeck = COMMANDERS_DATA[selectedCommander] || COMMANDERS_DATA[sortedCommanders[0]];
 
-  // Caricamento immagine del comandante da Scryfall
   useEffect(() => {
     async function fetchCommanderImg() {
       try {
@@ -103,13 +102,11 @@ function UpgradeContent() {
     fetchCommanderImg();
   }, [selectedCommander]);
 
-  // Calcolo sostituzioni e upgrade collegato a EDHREC e Scryfall
   const handleCalculateUpgrade = async () => {
     setIsLoading(true);
     setScryfallData(null);
 
     try {
-      // 1. Tagli presi direttamente dal mazzo precon originale
       const deckCards = currentDeck.cards.filter(([name]) => name.toLowerCase() !== selectedCommander.toLowerCase());
       const cuts: CardDetail[] = deckCards.slice(0, 5).map(([name]) => ({
         name,
@@ -119,7 +116,6 @@ function UpgradeContent() {
         image: `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image`
       }));
 
-      // 2. Aggiunte da Scryfall / EDHREC filtrate per identità di colore e budget
       const colorQuery = currentDeck.colorIdentity ? `id<=${currentDeck.colorIdentity}` : "id<=c";
       const res = await fetch(`https://api.scryfall.com/cards/search?q=f:commander ${colorQuery} -name:"${selectedCommander.replace(/"/g, '\\"')}"&order=edhrec`);
       const data = await res.json();
@@ -173,7 +169,6 @@ function UpgradeContent() {
           Nessuna intelligenza artificiale. Seleziona il tuo comandante, scegli il budget e calcola subito le sostituzioni ideali basate sui dati ufficiali.
         </p>
 
-        {/* Selezione Comandante A-Z */}
         <div style={{ marginBottom: "20px" }}>
           <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
             Seleziona il Comandante (A-Z):
@@ -191,7 +186,6 @@ function UpgradeContent() {
           </select>
         </div>
 
-        {/* Scheda Comandante */}
         <div style={{ display: "flex", gap: "20px", background: "#18181b", padding: "16px", borderRadius: "8px", border: "1px solid #27272a", marginBottom: "20px", alignItems: "center" }}>
           {commanderImage && (
             <img src={commanderImage} alt={selectedCommander} style={{ width: "110px", borderRadius: "8px", border: "1px solid #444" }} />
@@ -205,7 +199,6 @@ function UpgradeContent() {
           </div>
         </div>
 
-        {/* Selezione Budget */}
         <div style={{ background: "#111", padding: "16px", borderRadius: "8px", border: "1px solid #333", marginBottom: "20px" }}>
           <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold", color: "var(--gold, #d4af37)" }}>
             Budget Massimo per gli Acquisti: <span style={{ color: "#fff" }}>{budgetLimit === 9999 ? "Illimitato" : `${budgetLimit} €`}</span>
@@ -224,7 +217,6 @@ function UpgradeContent() {
           </div>
         </div>
 
-        {/* Pulsante Calcola Sostituzioni & Upgrade */}
         <button 
           onClick={handleCalculateUpgrade}
           disabled={isLoading}
@@ -234,7 +226,6 @@ function UpgradeContent() {
           {isLoading ? "⚡ Elaborazione Scryfall & EDHREC in corso..." : "Calcola Sostituzioni & Upgrade →"}
         </button>
 
-        {/* Risultati */}
         {scryfallData && (
           <div style={{ marginTop: "30px", background: "#111", padding: "20px", borderRadius: "10px", border: "1px solid var(--gold, #d4af37)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
@@ -246,10 +237,48 @@ function UpgradeContent() {
             
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginTop: "15px" }}>
               
-              {/* TAGLI */}
               <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #ff6b6b" }}>
                 <h4 style={{ color: "#ff6b6b", marginTop: 0 }}>❌ Carte da Rimuovere (Tagli):</h4>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {scryfallData.cuts.map((item, i) => (
                     <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
-                      {item.image && <img src={item.image} alt={item.name} style={{ width: "4
+                      {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ display: "block", color: "#fff", fontSize: "13px" }}>{item.name}</strong>
+                        <span style={{ color: "#aaa", fontSize: "11px" }}>{item.priceFormatted} · {item.type}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: "#1a1a1a", padding: "16px", borderRadius: "8px", borderLeft: "4px solid #51cf66" }}>
+                <h4 style={{ color: "#51cf66", marginTop: 0 }}>✅ Carte da Inserire (EDHREC):</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {scryfallData.additions.map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: "10px", alignItems: "center", background: "#222", padding: "8px", borderRadius: "6px" }}>
+                      {item.image && <img src={item.image} alt={item.name} style={{ width: "45px", borderRadius: "4px" }} />}
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ display: "block", color: "#fff", fontSize: "13px" }}>{item.name}</strong>
+                        <span style={{ color: "var(--gold, #d4af37)", fontSize: "11px" }}>{item.priceFormatted} · {item.type}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
+
+export default function UpgradePage() {
+  return (
+    <Suspense fallback={<div className="shell" style={{ color: "#fff", padding: "40px" }}>Caricamento modulo upgrade...</div>}>
+      <UpgradeContent />
+    </Suspense>
+  );
+}
