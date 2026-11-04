@@ -5,8 +5,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { createSupabaseBrowserClient } from "../../../lib/supabase-client";
-import { useLang, LangSwitch } from "../../../lib/i18n";
+import { supabase } from '@/lib/supabase-client';
+import { ... } from '@/lib/i18n';
+
 import AuthButton from "../../../components/AuthButton";
 import InstagramLink from "../../../components/InstagramLink";
 
