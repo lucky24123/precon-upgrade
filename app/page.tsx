@@ -8,12 +8,8 @@ export default function Landing() {
   const { t } = useLang();
   return (
     <main className="landing">
-      <section className="land-hero land-hero-clean">
-        <picture>
-          <source media="(max-width: 700px)" srcSet="/hero-mazzo-960.webp" />
-          <img src="/hero-mazzo.webp" alt={t.landImgAlt} fetchPriority="high" />
-        </picture>
-        <div className="land-shade land-shade-clean" />
+      {/* Hero senza foto mazzo/dadi — solo sfondo design */}
+      <section className="land-hero land-hero-plain">
         <div className="land-inner">
           <header className="land-head">
             <Link href="/" className="brand">
