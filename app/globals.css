@@ -255,3 +255,40 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
     background:linear-gradient(180deg,rgba(6,6,11,.55) 0%,rgba(6,6,11,.88) 55%,rgba(6,6,11,.96) 100%);
   }
 }
+
+/* Hero senza immagine mazzo/dadi */
+.land-hero-plain{
+  min-height:min(78vh,640px);
+  background:
+    radial-gradient(900px 500px at 10% 20%,rgba(167,139,250,.14),transparent 55%),
+    radial-gradient(800px 480px at 90% 10%,rgba(242,181,68,.12),transparent 50%),
+    radial-gradient(700px 400px at 50% 100%,rgba(52,211,153,.06),transparent 55%),
+    #06060B;
+  display:flex;
+  position:relative;
+  overflow:hidden;
+}
+.land-hero-plain .land-inner{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 20px 64px;
+  display:flex;
+  flex-direction:column;
+  min-height:min(78vh,640px);
+}
+.land-hero-plain .land-copy-clean{
+  margin-top:auto;
+  padding-top:80px;
+  padding-bottom:24px;
+  max-width:560px;
+}
+.land-hero-plain .land-head{
+  background:transparent;
+  border:0;
+  backdrop-filter:none;
+  margin:0;
+  padding:0;
+}
