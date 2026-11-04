@@ -281,3 +281,100 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
   .feature:hover,button:hover:not(:disabled),.cta:hover{transform:none}
 }
+
+/* ===== Carte fluttuanti in hero (solo grafica) ===== */
+.land-cards{
+  position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;
+}
+.land-card{
+  position:absolute;
+  width:min(200px,28vw);
+  border-radius:12px;
+  box-shadow:0 24px 60px -12px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.08);
+  object-fit:cover;
+  aspect-ratio:488/680;
+  opacity:.92;
+}
+.land-card-1{right:6%;top:18%;transform:rotate(8deg);animation:floatY 7s ease-in-out infinite}
+.land-card-2{right:18%;top:42%;transform:rotate(-6deg);width:min(170px,24vw);animation:floatY 8s ease-in-out infinite .4s}
+.land-card-3{right:4%;bottom:12%;transform:rotate(12deg);width:min(150px,22vw);animation:floatY 6.5s ease-in-out infinite .8s}
+.land-card-4{right:28%;top:14%;transform:rotate(-10deg);width:min(130px,18vw);opacity:.75;animation:floatY 9s ease-in-out infinite 1.2s}
+.land-card-5{right:32%;bottom:18%;transform:rotate(4deg);width:min(120px,16vw);opacity:.7;animation:floatY 7.5s ease-in-out infinite .2s}
+
+@keyframes floatY{
+  0%,100%{translate:0 0}
+  50%{translate:0 -12px}
+}
+
+@media(max-width:900px){
+  .land-card-4,.land-card-5{display:none}
+  .land-card{width:min(140px,30vw)}
+}
+@media(max-width:700px){
+  .land-cards{opacity:.45}
+  .land-card-2,.land-card-3{display:none}
+  .land-card-1{right:4%;top:auto;bottom:22%;transform:rotate(6deg)}
+}
+@media (prefers-reduced-motion: reduce){
+  .land-card{animation:none}
+}
+
+/* ===== IN / OUT upgrade (solo aspetto) ===== */
+.swap{
+  margin:18px 0;padding:20px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--r-panel);
+  box-shadow:0 16px 36px -20px rgba(0,0,0,.8);
+}
+.swap-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
+  gap:20px;
+  align-items:start;
+}
+.swap-side{display:flex;flex-direction:column;gap:10px}
+.swap-side .pill{align-self:flex-start}
+.card-picture{
+  display:block;text-decoration:none;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(0,0,0,.35);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.9);
+  transition:transform 180ms var(--ease),box-shadow 180ms var(--ease);
+}
+.card-picture:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 24px 48px -16px rgba(242,181,68,.25)}
+.card-picture img{
+  width:100%;max-width:260px;height:auto;display:block;margin:0 auto;
+  border-radius:0;
+}
+.role-tag{
+  display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;
+  font:600 11px 'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(167,139,250,.12);color:var(--violet);border:1px solid rgba(167,139,250,.28)
+}
+.swap .fine, .swap small{color:var(--muted);font-size:12px;line-height:1.55}
+.swap-reason{margin:12px 0 6px;font-size:14px;line-height:1.55;color:var(--ink)}
+.stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.stat-tile{
+  min-width:120px;padding:12px 14px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)
+}
+.stat-tile .label{font:700 10px 'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat-tile .value{font:600 20px 'DM Mono',monospace;color:var(--amber-text);margin-top:4px}
+
+.commander-result{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.commander-result .card-picture{max-width:180px}
+
+/* Mazzi salvati / lista */
+.deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
+.deck-card{
+  display:block;padding:16px;text-decoration:none;color:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.09);border-radius:var(--r-panel);
+  transition:transform 160ms var(--ease),border-color 160ms var(--ease)
+}
+.deck-card:hover{transform:translateY(-3px);border-color:rgba(242,181,68,.4)}
+.deck-card h3{margin:0 0 6px;font-size:16px;color:#fff}
+.deck-card p{margin:0;font-size:13px;color:var(--muted)}
+
+.btn-tap{touch-action:manipulation}
