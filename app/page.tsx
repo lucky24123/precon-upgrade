@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useLang, LangSwitch } from "@/lib/i18n";
-import AuthButton from "@/components/AuthButton";
-import InstagramLink from "@/components/InstagramLink";
+import { useLang, LangSwitch } from "../lib/i18n";
+import AuthButton from "../components/AuthButton";
+import InstagramLink from "../components/InstagramLink";
 
 export default function Home() {
   const { t } = useLang();
@@ -35,7 +35,7 @@ export default function Home() {
           <span>Forgia la leggenda.</span>
         </h1>
         <p className="hero-subtitle">
-          Strumenti gratuiti basati su statistiche EDHREC e dati Scryfall, con prezzi e uri un budget a tua scelta.<br />
+          Strumenti gratuiti basati su statistiche EDHREC e dati Scryfall, con prezzi e un budget a tua scelta.<br />
           Nessuna AI.
         </p>
 
@@ -176,7 +176,7 @@ export default function Home() {
             <div className="deck-card-info">
               <h4>Krenko – La Marea Goblin</h4>
               <p>Krenko, Mob Boss</p>
-              <div.stats-tag>+4100 · 🎴 7</div.stats-tag>
+              <div className="stats-tag">+4100 · 🎴 7</div>
             </div>
           </Link>
 
@@ -185,7 +185,7 @@ export default function Home() {
             <div className="deck-card-info">
               <h4>Elven Empire – Upgrade</h4>
               <p>Lathril, Blade of the Elves</p>
-              <div.stats-tag>+421 · 🎴 7</div.stats-tag>
+              <div className="stats-tag">+421 · 🎴 7</div>
             </div>
           </Link>
         </div>
