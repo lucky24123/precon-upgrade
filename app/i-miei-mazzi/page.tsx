@@ -5,15 +5,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { supabase } from '@/lib/supabase-client';
-import { ... } from '@/lib/i18n';
+import { createSupabaseBrowserClient } from '@/lib/supabase-client';
+import { useLang, LangSwitch } from '@/lib/i18n';
 
 import AuthButton from "../../../components/AuthButton";
 import InstagramLink from "../../../components/InstagramLink";
 
 type CardRow = { name: string; quantity: number; is_commander: boolean };
-type Deck = { id: string; title: string; commander: string; origin: string; deck_cards: CardRow[];
-  snapshot?: { swaps?: { cut: string | null; add: string; reason: string }[] } };
+type Deck = { 
+  id: string; 
+  title: string; 
+  commander: string; 
+  origin: string; 
+  deck_cards: CardRow[];
+  snapshot?: { swaps?: { cut: string | null; add: string; reason: string; cutImage?: string; addImage?: string }[] } 
+};
 
 export default function DeckDetail() {
   const { t } = useLang();
