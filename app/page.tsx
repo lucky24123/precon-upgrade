@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLang, LangSwitch } from "../lib/i18n";
-import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
 
 export default function Home() {
@@ -11,14 +10,15 @@ export default function Home() {
 
   return (
     <main className="shell">
-      {/* Header / Navigazione Superiore */}
+      {/* Header / Navigazione Superiore (Senza Amministrazione/Registrazione) */}
       <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
           PRECON UPGRADE <span>NO AI</span>
         </Link>
         <div className="headright">
-          <p>{t.tagline}</p>
-          <AuthButton />
+          <Link href="/cerca" className="authbtn ghostbtn">Cerca</Link>
+          <Link href="/deckbuilder" className="authbtn ghostbtn">Deckbuilder</Link>
+          <Link href="/upgrade" className="authbtn">Upgrade</Link>
           <LangSwitch />
           <InstagramLink />
         </div>
