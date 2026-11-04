@@ -8,8 +8,8 @@ import { useParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../lib/supabase-client";
 import { useLang, LangSwitch } from "../../lib/i18n";
 
-import AuthButton from "../../../components/AuthButton";
-import InstagramLink from "../../../components/InstagramLink";
+import AuthButton from "../../components/AuthButton";
+import InstagramLink from "../../components/InstagramLink";
 
 type CardRow = { name: string; quantity: number; is_commander: boolean };
 type Deck = { 
