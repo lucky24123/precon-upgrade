@@ -4,6 +4,19 @@ import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
 
+/** Carte in evidenza (solo grafiche Scryfall — nessuna logica cambiata) */
+const SHOWCASE = [
+  "Pantlaza, Sun-Favored",
+  "Cloud, Ex-SOLDIER",
+  "Krenko, Mob Boss",
+  "Atraxa, Praetors' Voice",
+  "The Ur-Dragon",
+];
+
+function scry(name: string) {
+  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image&version=normal`;
+}
+
 export default function Landing() {
   const { t } = useLang();
   return (
@@ -14,34 +27,72 @@ export default function Landing() {
           <img src="/hero-mazzo.webp" alt={t.landImgAlt} fetchPriority="high" />
         </picture>
         <div className="land-shade" />
+
+        {/* Carte fluttuanti — solo decorazione */}
+        <div className="land-cards" aria-hidden="true">
+          {SHOWCASE.map((name, i) => (
+            <img
+              key={name}
+              src={scry(name)}
+              alt=""
+              className={`land-card land-card-${i + 1}`}
+              loading={i < 2 ? "eager" : "lazy"}
+            />
+          ))}
+        </div>
+
         <div className="land-inner">
           <header className="land-head">
-            <Link href="/" className="brand">PRECON UPGRADE <span>NO AI</span></Link>
+            <Link href="/" className="brand">
+              PRECON UPGRADE <span>NO AI</span>
+            </Link>
             <div className="headright">
               <AuthButton />
               <LangSwitch />
-          <InstagramLink />
+              <InstagramLink />
             </div>
           </header>
           <div className="land-copy">
             <p className="land-kicker">{t.landKicker}</p>
-            <h1>{t.landTitle1}<br /><i>{t.landTitle2}</i></h1>
+            <h1>
+              {t.landTitle1}
+              <br />
+              <i>{t.landTitle2}</i>
+            </h1>
             <p className="land-text">{t.landText}</p>
             <div className="land-ctas">
-              <Link href="/migliora" className="cta primary btn-tap">{t.landCtaUpgrade}</Link>
-              <Link href="/crea-mazzo" className="cta ghost btn-tap">{t.landCtaBuild}</Link>
+              <Link href="/migliora" className="cta primary btn-tap">
+                {t.landCtaUpgrade}
+              </Link>
+              <Link href="/crea-mazzo" className="cta ghost btn-tap">
+                {t.landCtaBuild}
+              </Link>
             </div>
           </div>
         </div>
       </section>
+
       <section className="shell land-account-wrap">
         <AuthButton variant="landing" />
       </section>
+
       <section className="shell land-features">
-        <Link href="/migliora" className="feature card-foil"><h2>{t.landF1t}</h2><p>{t.landF1}</p></Link>
-        <Link href="/crea-mazzo" className="feature card-foil"><h2>{t.landF2t}</h2><p>{t.landF2}</p></Link>
-        <Link href="/crea-mazzo" className="feature card-foil"><h2>{t.landF3t}</h2><p>{t.landF3}</p></Link>
-        <Link href="/guida/come-funziona" className="feature card-foil"><h2>{t.landF4t}</h2><p>{t.landF4}</p></Link>
+        <Link href="/migliora" className="feature card-foil">
+          <h2>{t.landF1t}</h2>
+          <p>{t.landF1}</p>
+        </Link>
+        <Link href="/crea-mazzo" className="feature card-foil">
+          <h2>{t.landF2t}</h2>
+          <p>{t.landF2}</p>
+        </Link>
+        <Link href="/crea-mazzo" className="feature card-foil">
+          <h2>{t.landF3t}</h2>
+          <p>{t.landF3}</p>
+        </Link>
+        <Link href="/guida/come-funziona" className="feature card-foil">
+          <h2>{t.landF4t}</h2>
+          <p>{t.landF4}</p>
+        </Link>
       </section>
     </main>
   );
