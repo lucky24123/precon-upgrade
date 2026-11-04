@@ -8,19 +8,16 @@ import InstagramLink from "../components/InstagramLink";
 
 export default function Home() {
   const { t } = useLang();
-  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <main className="shell">
       {/* Header / Navigazione Superiore */}
-      <header className="nav-header">
+      <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
           PRECON UPGRADE <span>NO AI</span>
         </Link>
-        <div className="nav-links-right">
-          <Link href="/cerca" className="nav-link-btn">Cerca</Link>
-          <Link href="/deckbuilder" className="nav-link-btn">Deckbuilder</Link>
-          <Link href="/upgrade" className="nav-link-btn primary">Upgrade</Link>
+        <div className="headright">
+          <p>{t.tagline}</p>
           <AuthButton />
           <LangSwitch />
           <InstagramLink />
@@ -28,165 +25,87 @@ export default function Home() {
       </header>
 
       {/* Sezione Hero Principale */}
-      <section className="hero-section">
-        <div className="hero-badge">MAGIC: THE GATHERING · COMMANDER</div>
-        <h1 className="hero-title">
-          Eredi il precon.<br />
-          <span>Forgia la leggenda.</span>
-        </h1>
-        <p className="hero-subtitle">
-          Strumenti gratuiti basati su statistiche EDHREC e dati Scryfall, con prezzi e un budget a tua scelta.<br />
-          Nessuna AI.
+      <section className="hero">
+        <div className="eyebrow">MAGIC: THE GATHERING · COMMANDER</div>
+        <h1>Eredi il precon.<br /><i>Forgia la leggenda.</i></h1>
+        <p>
+          Strumenti gratuiti basati su statistiche EDHREC e dati Scryfall, con prezzi e un budget a tua scelta. Nessuna AI.
         </p>
 
         {/* Pulsanti di azione rapida */}
-        <div className="hero-actions">
-          <Link href="/upgrade" className="btn-primary-gold">
+        <div className="land-ctas" style={{ margin: "24px 0" }}>
+          <Link href="/upgrade" className="cta primary">
             Upgrade un precon →
           </Link>
-          <Link href="/deckbuilder" className="btn-secondary">
+          <Link href="/deckbuilder" className="cta ghost">
             Costruisci da zero
           </Link>
-          <Link href="/cerca" className="btn-secondary">
+          <Link href="/cerca" className="cta ghost">
             Cerca carte
           </Link>
         </div>
 
         {/* Marquee / Barra scorrevole carte popolari */}
-        <div className="popular-cards-bar">
-          <span>⚡</span>
-          <div className="cards-ticker">
-            <span>Cyclonic Rift</span>
-            <span>Smothering Tithe</span>
-            <span>Demonic Tutor</span>
-            <span>Rhystic Study</span>
-            <span>Fierce Guardianship</span>
-            <span>Teferi's Protection</span>
-            <span>Mana Crypt</span>
-            <span>Force of Will</span>
+        <div className="marquee" style={{ borderRadius: "12px", margin: "20px 0" }}>
+          <div className="marquee-track">
+            <span className="marquee-item">⚡ Cyclonic Rift</span>
+            <span className="marquee-item">⚡ Smothering Tithe</span>
+            <span className="marquee-item">⚡ Demonic Tutor</span>
+            <span className="marquee-item">⚡ Rhystic Study</span>
+            <span className="marquee-item">⚡ Fierce Guardianship</span>
+            <span className="marquee-item">⚡ Teferi's Protection</span>
+            <span className="marquee-item">⚡ Mana Crypt</span>
+            <span className="marquee-item">⚡ Force of Will</span>
           </div>
         </div>
       </section>
 
       {/* Sezione Precon Ufficiali */}
-      <section className="content-section">
-        <div className="section-header-row">
-          <h3>PRECON UFFICIALI</h3>
-          <h2>Scegli un precon da potenziare</h2>
-        </div>
+      <section className="panel">
+        <div className="eyebrow">PRECON UFFICIALI</div>
+        <h2>Scegli un precon da potenziare</h2>
 
-        <div className="decks-grid">
-          {/* Card Precon 1 */}
-          <Link href="/upgrade?precon=ruinous-powers" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>The Ruinous Powers</h4>
-              <p>Warhammer 40,000</p>
-              <div className="color-indicators">
-                <span className="dot b"></span>
-                <span className="dot r"></span>
-              </div>
-            </div>
+        <div className="card-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", marginTop: "20px" }}>
+          <Link href="/upgrade?precon=ruinous-powers" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>The Ruinous Powers</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Warhammer 40,000</p>
           </Link>
-
-          {/* Card Precon 2 */}
-          <Link href="/upgrade?precon=ahoy-mateys" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Ahoy Mateys</h4>
-              <p>The Lost Caverns of Ixalan</p>
-              <div className="color-indicators">
-                <span className="dot w"></span>
-                <span className="dot b"></span>
-                <span className="dot r"></span>
-              </div>
-            </div>
+          <Link href="/upgrade?precon=ahoy-mateys" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Ahoy Mateys</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>The Lost Caverns of Ixalan</p>
           </Link>
-
-          {/* Card Precon 3 */}
-          <Link href="/upgrade?precon=quantum-quandrix" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Quantum Quandrix</h4>
-              <p>Commander 2021</p>
-              <div className="color-indicators">
-                <span className="dot g"></span>
-                <span className="dot u"></span>
-              </div>
-            </div>
+          <Link href="/upgrade?precon=quantum-quandrix" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Quantum Quandrix</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Commander 2021</p>
           </Link>
-
-          {/* Card Precon 4 */}
-          <Link href="/upgrade?precon=reap-the-tides" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Reap the Tides</h4>
-              <p>Commander Legends</p>
-              <div className="color-indicators">
-                <span className="dot g"></span>
-                <span className="dot u"></span>
-              </div>
-            </div>
+          <Link href="/upgrade?precon=reap-the-tides" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Reap the Tides</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Commander Legends</p>
           </Link>
-
-          {/* Card Precon 5 */}
-          <Link href="/upgrade?precon=subjective-reality" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Subjective Reality</h4>
-              <p>Commander 2018</p>
-              <div className="color-indicators">
-                <span className="dot w"></span>
-                <span className="dot u"></span>
-                <span className="dot b"></span>
-              </div>
-            </div>
+          <Link href="/upgrade?precon=subjective-reality" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Subjective Reality</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Commander 2018</p>
           </Link>
-
-          {/* Card Precon 6 */}
-          <Link href="/upgrade?precon=miracle-worker" className="deck-card">
-            <div className="deck-card-image placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Miracle Worker</h4>
-              <p>Duskmourn</p>
-              <div className="color-indicators">
-                <span className="dot w"></span>
-                <span className="dot u"></span>
-                <span className="dot b"></span>
-              </div>
-            </div>
+          <Link href="/upgrade?precon=miracle-worker" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Miracle Worker</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Duskmourn</p>
           </Link>
-        </div>
-
-        <div className="view-all-link">
-          <Link href="/precon">Vedi tutti i precon →</Link>
         </div>
       </section>
 
       {/* Sezione Guide e Upgrade Pronti */}
-      <section className="content-section">
-        <div className="section-header-row">
-          <h3>GUIDE IN EVIDENZA</h3>
-          <h2>Mazzi e upgrade pronti</h2>
-        </div>
+      <section className="panel">
+        <div className="eyebrow">GUIDE IN EVIDENZA</div>
+        <h2>Mazzi e upgrade pronti</h2>
 
-        <div className="decks-grid small">
-          <Link href="/mazzi/krenko" className="deck-card horizontal">
-            <div className="deck-card-image small placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Krenko – La Marea Goblin</h4>
-              <p>Krenko, Mob Boss</p>
-              <div className="stats-tag">+4100 · 🎴 7</div>
-            </div>
+        <div className="links" style={{ marginTop: "20px" }}>
+          <Link href="/mazzi/krenko">
+            <strong>Krenko – La Marea Goblin</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Krenko, Mob Boss · +4100 · 🎴 7</p>
           </Link>
-
-          <Link href="/mazzi/elven-empire" className="deck-card horizontal">
-            <div className="deck-card-image small placeholder-img"></div>
-            <div className="deck-card-info">
-              <h4>Elven Empire – Upgrade</h4>
-              <p>Lathril, Blade of the Elves</p>
-              <div className="stats-tag">+421 · 🎴 7</div>
-            </div>
+          <Link href="/mazzi/elven-empire">
+            <strong>Elven Empire – Upgrade</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Lathril, Blade of the Elves · +421 · 🎴 7</p>
           </Link>
         </div>
       </section>
