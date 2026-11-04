@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <main className="shell">
-      {/* Header / Navigazione Superiore (Senza Amministrazione/Registrazione) */}
+      {/* Header / Navigazione Superiore */}
       <header>
         <Link href="/" className="brand" style={{ color: "inherit", textDecoration: "none" }}>
           PRECON UPGRADE <span>NO AI</span>
@@ -44,68 +44,61 @@ export default function Home() {
             Cerca carte
           </Link>
         </div>
-
-        {/* Marquee / Barra scorrevole carte popolari */}
-        <div className="marquee" style={{ borderRadius: "12px", margin: "20px 0" }}>
-          <div className="marquee-track">
-            <span className="marquee-item">⚡ Cyclonic Rift</span>
-            <span className="marquee-item">⚡ Smothering Tithe</span>
-            <span className="marquee-item">⚡ Demonic Tutor</span>
-            <span className="marquee-item">⚡ Rhystic Study</span>
-            <span className="marquee-item">⚡ Fierce Guardianship</span>
-            <span className="marquee-item">⚡ Teferi's Protection</span>
-            <span className="marquee-item">⚡ Mana Crypt</span>
-            <span className="marquee-item">⚡ Force of Will</span>
-          </div>
-        </div>
       </section>
 
-      {/* Sezione Precon Ufficiali */}
+      {/* Sezione Precon Ufficiali (Tutti i tuoi mazzi) */}
       <section className="panel">
         <div className="eyebrow">PRECON UFFICIALI</div>
         <h2>Scegli un precon da potenziare</h2>
 
         <div className="card-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", marginTop: "20px" }}>
-          <Link href="/upgrade?precon=ruinous-powers" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>The Ruinous Powers</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Warhammer 40,000</p>
+          <Link href="/upgrade?precon=Calling-All-Angels" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Calling All Angels</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Giada, Font of Hope</p>
           </Link>
-          <Link href="/upgrade?precon=ahoy-mateys" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>Ahoy Mateys</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>The Lost Caverns of Ixalan</p>
+          <Link href="/upgrade?precon=Keen-Engineering" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Keen Engineering</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Sai, Master Thopterist</p>
           </Link>
-          <Link href="/upgrade?precon=quantum-quandrix" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>Quantum Quandrix</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Commander 2021</p>
+          <Link href="/upgrade?precon=Multiverse-Reforged" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Multiverse Reforged</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Jace, Multiverse Architect</p>
           </Link>
-          <Link href="/upgrade?precon=reap-the-tides" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>Reap the Tides</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Commander Legends</p>
+          <Link href="/upgrade?precon=Reign-of-Dragons" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Reign of Dragons</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Lathliss, Dragon Queen</p>
           </Link>
-          <Link href="/upgrade?precon=subjective-reality" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>Subjective Reality</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Commander 2018</p>
+          <Link href="/upgrade?precon=Tramplesaurus-Rex" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Tramplesaurus Rex</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Ghalta, Primal Hunger</p>
           </Link>
-          <Link href="/upgrade?precon=miracle-worker" className="links" style={{ display: "block", textDecoration: "none" }}>
-            <strong>Miracle Worker</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Duskmourn</p>
+          <Link href="/upgrade?precon=Wretched-Ranks" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Wretched Ranks</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Ghoulcaller Gisa</p>
           </Link>
-        </div>
-      </section>
-
-      {/* Sezione Guide e Upgrade Pronti */}
-      <section className="panel">
-        <div className="eyebrow">GUIDE IN EVIDENZA</div>
-        <h2>Mazzi e upgrade pronti</h2>
-
-        <div className="links" style={{ marginTop: "20px" }}>
-          <Link href="/mazzi/krenko">
-            <strong>Krenko – La Marea Goblin</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Krenko, Mob Boss · +4100 · 🎴 7</p>
+          <Link href="/upgrade?precon=Hatsune-Miku" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Hatsune Miku</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Trostani, Selesnya's Voice</p>
           </Link>
-          <Link href="/mazzi/elven-empire">
-            <strong>Elven Empire – Upgrade</strong>
-            <p className="fine" style={{ margin: "4px 0 0" }}>Lathril, Blade of the Elves · +421 · 🎴 7</p>
+          <Link href="/upgrade?precon=Avengers-Assemble" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Avengers Assemble</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Captain America, Team Leader</p>
+          </Link>
+          <Link href="/upgrade?precon=Doom-Prevails" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Doom Prevails</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Doctor Doom</p>
+          </Link>
+          <Link href="/upgrade?precon=The-Fantastic-Four" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>The Fantastic Four</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Invisible Woman</p>
+          </Link>
+          <Link href="/upgrade?precon=Wakanda-Forever" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Wakanda Forever</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>T'Challa, the Black Panther</p>
+          </Link>
+          <Link href="/upgrade?precon=Goblin-Storm" className="links" style={{ display: "block", textDecoration: "none" }}>
+            <strong>Goblin Storm</strong>
+            <p className="fine" style={{ margin: "4px 0 0" }}>Zada, Hedron Grinder</p>
           </Link>
         </div>
       </section>
