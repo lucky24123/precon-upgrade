@@ -4,17 +4,6 @@ import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
 
-const SHOWCASE = [
-  "Pantlaza, Sun-Favored",
-  "Cloud, Ex-SOLDIER",
-  "Krenko, Mob Boss",
-  "Atraxa, Praetors' Voice",
-  "The Ur-Dragon",
-];
-
-function scry(name: string) {
-  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image&version=normal`;
-}
 
 export default function Landing() {
   const { t } = useLang();
@@ -26,17 +15,6 @@ export default function Landing() {
           <img src="/hero-mazzo.webp" alt={t.landImgAlt} fetchPriority="high" />
         </picture>
         <div className="land-shade" />
-        <div className="land-cards" aria-hidden="true">
-          {SHOWCASE.map((name, i) => (
-            <img
-              key={name}
-              src={scry(name)}
-              alt=""
-              className={`land-card land-card-${i + 1}`}
-              loading={i < 2 ? "eager" : "lazy"}
-            />
-          ))}
-        </div>
         <div className="land-inner">
           <header className="land-head">
             <Link href="/" className="brand">
@@ -67,17 +45,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...SHOWCASE, ...SHOWCASE].map((name, i) => (
-            <span key={i} className="marquee-item">
-              <img src={scry(name)} alt="" />
-              {name}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <section className="shell steps-section">
         <p className="eyebrow">Come funziona</p>
