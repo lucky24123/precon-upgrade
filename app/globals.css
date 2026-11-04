@@ -219,3 +219,39 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
   .land-card,.marquee-track{animation:none}
 }
+/* Home pulita — aggiungi in fondo a globals.css */
+.land-hero-clean{min-height:min(86vh,720px)}
+.land-shade-clean{
+  background:linear-gradient(
+    105deg,
+    rgba(6,6,11,.92) 0%,
+    rgba(6,6,11,.78) 38%,
+    rgba(6,6,11,.35) 68%,
+    rgba(6,6,11,.15) 100%
+  );
+}
+.land-copy-clean{max-width:560px;padding-top:min(22vh,160px)}
+.land-copy-clean h1{font-size:clamp(34px,5.5vw,52px);line-height:1.08;margin:12px 0 16px}
+.land-copy-clean .land-text{font-size:15px;line-height:1.7;color:#B8B8C8;max-width:480px}
+.land-copy-clean .land-ctas{margin-top:28px;gap:12px}
+.land-features-clean{
+  padding-top:40px;padding-bottom:24px;
+  max-width:1100px;
+}
+.land-features-clean .feature{
+  padding:24px 22px;
+  transition:transform 180ms cubic-bezier(.22,1,.36,1),border-color 180ms ease;
+}
+.land-features-clean .feature:hover{
+  transform:translateY(-4px);
+  border-color:rgba(242,181,68,.45);
+}
+.land-features-clean .feature h2{font-size:18px;margin:0 0 10px}
+.land-features-clean .feature p{font-size:13px;line-height:1.65}
+.land-account-wrap{padding-top:8px;padding-bottom:48px;max-width:1100px}
+@media(max-width:700px){
+  .land-copy-clean{padding-top:100px}
+  .land-shade-clean{
+    background:linear-gradient(180deg,rgba(6,6,11,.55) 0%,rgba(6,6,11,.88) 55%,rgba(6,6,11,.96) 100%);
+  }
+}
