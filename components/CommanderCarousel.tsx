@@ -11,54 +11,70 @@ const COMMANDERS = [
   "Atraxa, Praetors' Voice",
 ];
 
-type CommanderImage = {
+type CommanderCard = {
   name: string;
   image: string;
 };
 
+type ScryfallCard = {
+  image_uris?: {
+    normal?: string;
+  };
+  card_faces?: {
+    image_uris?: {
+      normal?: string;
+    };
+  }[];
+};
+
 export default function CommanderCarousel() {
-  const [cards, setCards] = useState<CommanderImage[]>([]);
+  const [cards, setCards] = useState<CommanderCard[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
 
-    async function loadImages() {
+    async function loadCards() {
+      const loaded: CommanderCard[] = [];
+
       for (const name of COMMANDERS) {
-        if (!active) break;
+        if (!active) return;
 
         try {
           const response = await fetch(
             `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}`,
             {
               signal: controller.signal,
-              headers: { Accept: "application/json" },
+              headers: {
+                Accept: "application/json",
+              },
             }
           );
 
           if (response.ok) {
-            const card = await response.json();
+            const card: ScryfallCard = await response.json();
 
             const image =
               card.image_uris?.normal ??
               card.card_faces?.[0]?.image_uris?.normal;
 
-            if (active && image) {
-              setCards((current) => [
-                ...current,
-                { name, image },
-              ]);
+            if (image) {
+              loaded.push({ name, image });
             }
           }
         } catch {
           if (!active) return;
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 700));
+        if (active) {
+          setCards([...loaded]);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 750));
       }
     }
 
-    void loadImages();
+    void loadCards();
 
     return () => {
       active = false;
@@ -70,28 +86,34 @@ export default function CommanderCarousel() {
 
   return (
     <section
-      className="commander-carousel"
+      className="cu-commanders"
       aria-label="Galleria dei comandanti"
     >
-      <div className="commander-window">
-        <div className="commander-track">
+      <div className="cu-commanders-window">
+        <div className="cu-commanders-track">
           {[0, 1].map((copy) => (
             <div
-              className="commander-group"
               key={copy}
+              className="cu-commanders-group"
               aria-hidden={copy === 1 ? true : undefined}
             >
               {cards.map((card) => (
-                <figure className="commander-card" key={card.name}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={card.image}
-                    alt={copy === 0 ? card.name : ""}
-                    width={488}
-                    height={680}
-                    decoding="async"
-                    draggable={false}
-                  />
+                <figure
+                  className="cu-commanders-card"
+                  key={`${copy}-${card.name}`}
+                >
+                  <div className="cu-commanders-picture">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={card.image}
+                      alt={copy === 0 ? card.name : ""}
+                      width={488}
+                      height={680}
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </div>
+
                   <figcaption>{card.name}</figcaption>
                 </figure>
               ))}
@@ -101,86 +123,121 @@ export default function CommanderCarousel() {
       </div>
 
       <style jsx>{`
-        .commander-carousel {
+        .cu-commanders {
+          position: relative;
+          display: block;
+          flex: 0 0 auto;
           width: 100%;
+          max-width: 100%;
           min-width: 0;
-          margin-top: 36px;
+          margin: 28px 0 0;
+          padding: 0;
+          isolation: isolate;
         }
 
-        .commander-window {
+        .cu-commanders-window {
+          position: relative;
           width: 100%;
+          max-width: 100%;
           overflow: hidden;
-          padding: 14px 0 20px;
+          padding: 12px 0 18px;
           -webkit-mask-image: linear-gradient(
             to right,
             transparent,
-            black 6%,
-            black 94%,
+            #000 5%,
+            #000 95%,
             transparent
           );
           mask-image: linear-gradient(
             to right,
             transparent,
-            black 6%,
-            black 94%,
+            #000 5%,
+            #000 95%,
             transparent
           );
         }
 
-        .commander-track {
+        .cu-commanders-track {
           display: flex;
+          align-items: flex-start;
           width: max-content;
-          animation: commander-scroll 38s linear infinite;
+          animation: cu-commanders-slide 32s linear infinite;
         }
 
-        .commander-window:hover .commander-track {
+        .cu-commanders-window:hover .cu-commanders-track {
           animation-play-state: paused;
         }
 
-        .commander-group {
+        .cu-commanders-group {
           display: flex;
-          flex-shrink: 0;
+          flex: 0 0 auto;
           align-items: flex-start;
-          gap: 18px;
-          padding-right: 18px;
-          min-width: 100vw;
-          justify-content: space-around;
+          gap: 16px;
+          padding: 0 16px 0 0;
         }
 
-        .commander-card {
-          flex: 0 0 154px;
-          width: 154px;
-          margin: 0;
-        }
-
-        .commander-card img {
+        .cu-commanders-card {
+          position: relative;
           display: block;
-          width: 100%;
-          height: auto;
-          aspect-ratio: 488 / 680;
-          object-fit: cover;
-          border-radius: 10px;
-          border: 1px solid rgba(242, 181, 68, 0.3);
-          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+          flex: 0 0 110px;
+          width: 110px;
+          min-width: 110px;
+          max-width: 110px;
+          margin: 0;
+          padding: 0;
+        }
+
+        .cu-commanders-picture {
+          position: relative;
+          width: 110px;
+          height: 154px;
+          overflow: hidden;
+          border: 1px solid rgba(242, 181, 68, 0.32);
+          border-radius: 8px;
+          background: #12121d;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
           transition:
             transform 180ms ease,
             border-color 180ms ease;
         }
 
-        .commander-card:hover img {
-          transform: translateY(-5px);
-          border-color: rgba(242, 181, 68, 0.8);
+        .cu-commanders .cu-commanders-picture img {
+          position: static !important;
+          inset: auto !important;
+          display: block !important;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          min-height: 0 !important;
+          max-height: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          border: 0 !important;
+          border-radius: 0 !important;
+          object-fit: contain !important;
+          object-position: center !important;
+          transform: none !important;
         }
 
-        .commander-card figcaption {
-          margin-top: 9px;
+        .cu-commanders-card:hover .cu-commanders-picture {
+          transform: translateY(-4px);
+          border-color: rgba(242, 181, 68, 0.85);
+        }
+
+        .cu-commanders-card figcaption {
+          display: block;
+          margin: 8px 0 0;
+          padding: 0;
           color: #c9c9d6;
-          font-size: 11px;
+          font-size: 10px;
+          font-weight: 500;
           line-height: 1.4;
           text-align: center;
+          overflow-wrap: anywhere;
         }
 
-        @keyframes commander-scroll {
+        @keyframes cu-commanders-slide {
           from {
             transform: translateX(0);
           }
@@ -190,31 +247,42 @@ export default function CommanderCarousel() {
         }
 
         @media (max-width: 600px) {
-          .commander-carousel {
-            margin-top: 24px;
+          .cu-commanders {
+            margin-top: 22px;
           }
 
-          .commander-card {
-            flex-basis: 120px;
-            width: 120px;
-          }
-
-          .commander-group {
+          .cu-commanders-group {
             gap: 12px;
             padding-right: 12px;
+          }
+
+          .cu-commanders-card {
+            flex-basis: 90px;
+            width: 90px;
+            min-width: 90px;
+            max-width: 90px;
+          }
+
+          .cu-commanders-picture {
+            width: 90px;
+            height: 126px;
+          }
+
+          .cu-commanders-card figcaption {
+            font-size: 9px;
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .commander-track {
-            animation: none;
-          }
-
-          .commander-window {
+          .cu-commanders-window {
             overflow-x: auto;
           }
 
-          .commander-card:hover img {
+          .cu-commanders-track {
+            animation: none;
+          }
+
+          .cu-commanders-card:hover .cu-commanders-picture {
             transform: none;
           }
         }
