@@ -34,11 +34,13 @@ export default function Landing() {
               <Link href="/migliora" className="cta primary btn-tap">
                 {t.landCtaUpgrade}
               </Link>
-              <Link href="/crea-mazzo" className="cta ghost btn-tap">
+             <Link href="/crea-mazzo" className="cta ghost btn-tap">
                 {t.landCtaBuild}
               </Link>
             </div>
           </div>
+
+          <CommanderCarousel />
         </div>
       </section>
 
