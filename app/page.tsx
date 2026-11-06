@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
-
+import CommanderCarousel from "../components/CommanderCarousel";
 export default function Landing() {
   const { t } = useLang();
   return (
