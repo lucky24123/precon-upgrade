@@ -294,21 +294,21 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 /* Upgrade spotlight */
 .upgrade-spotlight {
-  margin-top: 24px;
-  padding: 16px;
-  border-radius: 16px;
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #170b22, #2b1230);
   color: #fff;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
 }
 
 .upgrade-spotlight-head {
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
 .upgrade-spotlight-head h2 {
-  margin: 0 0 4px;
-  font-size: 11px;
+  margin: 0 0 6px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #d9a441;
@@ -317,63 +317,83 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 .upgrade-spotlight-head p {
   margin: 0;
   color: #e7d9f2;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .upgrade-spotlight-grid {
   display: flex;
-  gap: 10px;
+  gap: 18px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
 }
 
 .upgrade-card {
-  flex: 0 0 70px;
-  width: 70px;
+  flex: 0 0 130px;
+  width: 130px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
   text-decoration: none;
   color: inherit;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.upgrade-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.13);
 }
 
 .upgrade-card img {
   display: block;
-  width: 70px;
-  height: 98px;
+  width: 110px;
+  height: 154px;
+  margin: 0 auto;
   object-fit: contain;
   object-position: center;
-  border-radius: 4px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.28);
+  border-radius: 6px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
 }
 
 .upgrade-card-info {
-  margin-top: 5px;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .upgrade-card-info h3 {
   margin: 0;
-  font-size: 9px;
-  line-height: 1.15;
+  font-size: 13px;
+  line-height: 1.2;
   color: #fff;
 }
 
 .upgrade-card-info p {
-  margin: 2px 0 0;
-  font-size: 8px;
+  margin: 4px 0 0;
+  font-size: 11px;
   color: #c9b6dd;
 }
 
-@media (max-width: 600px) {
+.upgrade-card-info span {
+  display: none;
+}
+
+@media (max-width: 760px) {
   .upgrade-spotlight {
-    padding: 12px;
+    padding: 16px;
+  }
+
+  .upgrade-spotlight-grid {
+    gap: 14px;
   }
 
   .upgrade-card {
-    flex: 0 0 60px;
-    width: 60px;
+    flex: 0 0 115px;
+    width: 115px;
+    padding: 8px;
   }
 
   .upgrade-card img {
-    width: 60px;
-    height: 84px;
+    width: 95px;
+    height: 133px;
   }
 }
