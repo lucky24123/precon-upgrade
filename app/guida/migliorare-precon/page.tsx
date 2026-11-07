@@ -1,146 +1,210 @@
-import type { Metadata } from "next";
-import GuidePage, { type GuideContent } from "../../../components/GuidePage";
-import { SITE_NAME } from "../../../lib/site";
-
-export const metadata: Metadata = {
-  title: `Migliorare un precon Commander — ${SITE_NAME}`,
+export const metadata = {
+  title: "Guida: migliorare un precon Commander | Precon Upgrade",
   description:
-    "Guida passo a passo per migliorare un precon Commander con Precon Upgrade: trovare il precon, impostare il budget, leggere le sostituzioni e applicare i cambi con giudizio.",
-  alternates: { canonical: "/guida/migliorare-precon" },
-};
-
-const it: GuideContent = {
-  title: "Migliorare un precon Commander",
-  intro:
-    "I mazzi precostruiti Commander sono pensati per essere giocati subito, ma contengono quasi sempre qualche carta lenta o fuori tema. Questa guida mostra come usare Precon Upgrade per spendere bene un budget di upgrade, passo a passo.",
-  sections: [
-    {
-      title: "1. Trova il tuo precon",
-      body: [
-        "Nella pagina di upgrade scrivi il nome del comandante: se esiste un precon ufficiale con quel comandante, il sito propone la sua lista ufficiale e puoi caricarla con un clic. Se hai già modificato il tuo precon, incolla la tua lista: il confronto funziona uguale.",
-        "Non serve copiare la lista a mano: le intestazioni tipo «Creature» vengono ignorate e puoi mantenere le virgole nei nomi delle carte. Se un nome non viene riconosciuto, il sito te lo segnala: correggilo per un confronto più preciso.",
-      ],
-      links: [{ label: "Vai allo strumento di upgrade", href: "/migliora" }],
-    },
-    {
-      title: "2. Imposta budget e numero di cambi",
-      body: [
-        "Due impostazioni guidano la selezione:",
-        [
-          "Budget in euro: quanto vuoi spendere in totale per le nuove carte. Il filtro scarta le sostituzioni che lo superano.",
-          "Numero massimo di cambi: con 5–10 cambi correggi i problemi principali; con 20 o più ricostruisci il mazzo in modo più deciso.",
-        ],
-        "Un buon punto di partenza per un precon recente è 10 cambi con un budget di 30–50 €: risolvi ramp, rimozioni e pescata senza stravolgere la lista.",
-      ],
-    },
-    {
-      title: "3. Leggi le sostituzioni",
-      body: [
-        "Ogni suggerimento mostra la carta da togliere e quella da aggiungere, con immagini, prezzo stimato e statistiche. Le sostituzioni seguono in genere tre direzioni ricorrenti nei precon:",
-        [
-          "Ramp e terre: i precon hanno spesso troppo poco acceleratore; le rocce da 2 mana e le terre che entrano senza tuffarsi sono i primi acquisti consigliati.",
-          "Rimozioni flessibili: i precon includono rimozioni costose o limitate; le statistiche spingono verso rimozioni a basso costo che gestiscono più tipi di minacce.",
-          "Pescata e motori: le carte che «si rimpiazzano da sole» o pescano al verificarsi di condizioni del comandante alzano la costanza del mazzo.",
-        ],
-        "Ricorda che gli abbinamenti sono automatici: prima di comprare, controlla che la carta in entrata abbia davvero senso nel tuo piano di gioco.",
-      ],
-    },
-    {
-      title: "4. Applica i cambi con giudizio",
-      body: [
-        "Non applicare tutti i suggerimenti in blocco. Un metodo semplice:",
-        [
-          "Parti dalle sostituzioni con inclusione e sinergia più alte: sono le più collaudate dalla community.",
-          "Mantieni la curva di mana: se togli molte carte a basso costo, controlla di non alzare troppo la media.",
-          "Conserva le carte che servono al piano del comandante, anche se poco popolari: le statistiche premiano la popolarità, non la coerenza col tuo tema.",
-        ],
-        "Salva il risultato con un account per ritrovarlo in «I miei mazzi» e confrontarlo dopo i prossimi cambi.",
-      ],
-    },
-    {
-      title: "Prima di acquistare",
-      body: [
-        "Controlla sempre:",
-        [
-          "il prezzo reale del venditore: la stima usa la stampa più economica e cambia con il mercato;",
-          "la legalità della carta in Commander nella pagina Ban;",
-          "che il totale delle nuove carte resti nel budget, spedizione esclusa.",
-        ],
-      ],
-      links: [
-        { label: "Elenco ban Commander", href: "/ban" },
-        { label: "Come funziona il confronto", href: "/guida/come-funziona" },
-      ],
-    },
-  ],
-};
-
-const en: GuideContent = {
-  title: "Upgrading a Commander precon",
-  intro:
-    "Commander precons are built to play out of the box, but they almost always contain a few slow or off-theme cards. This guide shows how to use Precon Upgrade to spend an upgrade budget well, step by step.",
-  sections: [
-    {
-      title: "1. Find your precon",
-      body: [
-        "On the upgrade page type the commander's name: if an official precon exists with that commander, the site offers its official list and you can load it with one click. If you already modified your precon, paste your own list: the comparison works the same.",
-        "No need to reformat the list by hand: headers like \"Creatures\" are ignored and commas in card names are kept. If a name is not recognized, the site reports it: fix it for a more precise comparison.",
-      ],
-      links: [{ label: "Open the upgrade tool", href: "/migliora" }],
-    },
-    {
-      title: "2. Set budget and swap count",
-      body: [
-        "Two settings drive the selection:",
-        [
-          "Budget in euros: how much you want to spend on new cards in total. The filter discards swaps that exceed it.",
-          "Maximum swaps: with 5–10 swaps you fix the main issues; with 20 or more you rebuild the deck more aggressively.",
-        ],
-        "A good starting point for a recent precon is 10 swaps with a 30–50 € budget: you solve ramp, removal and draw without turning the list upside down.",
-      ],
-    },
-    {
-      title: "3. Read the swaps",
-      body: [
-        "Each suggestion shows the card to cut and the card to add, with images, estimated price and statistics. Swaps usually follow three recurring directions in precons:",
-        [
-          "Ramp and lands: precons often run too little acceleration; 2-mana rocks and lands that enter untapped are the first recommended buys.",
-          "Flexible removal: precons include costly or narrow removal; the statistics push toward low-cost removal that handles more threat types.",
-          "Draw and engines: cards that \"replace themselves\" or draw when the commander's conditions occur raise the deck's consistency.",
-        ],
-        "Remember that pairings are automatic: before buying, check that the incoming card really fits your game plan.",
-      ],
-    },
-    {
-      title: "4. Apply changes with judgment",
-      body: [
-        "Do not apply every suggestion wholesale. A simple method:",
-        [
-          "Start from swaps with the highest inclusion and synergy: they are the most community-tested.",
-          "Keep the mana curve: if you cut many low-cost cards, check the average does not rise too much.",
-          "Keep the cards your commander's plan needs, even unpopular ones: statistics reward popularity, not coherence with your theme.",
-        ],
-        "Save the result with an account to find it under \"My decks\" and compare it after your next changes.",
-      ],
-    },
-    {
-      title: "Before buying",
-      body: [
-        "Always check:",
-        [
-          "the vendor's real price: the estimate uses the cheapest printing and changes with the market;",
-          "the card's Commander legality on the Ban page;",
-          "that the total of new cards stays within budget, shipping excluded.",
-        ],
-      ],
-      links: [
-        { label: "Commander ban list", href: "/ban" },
-        { label: "How the comparison works", href: "/guida/come-funziona" },
-      ],
-    },
-  ],
+    "Scopri come migliorare un precon Commander con budget, ramp, rimozioni, pescata e upgrade mirati usando Precon Upgrade.",
 };
 
 export default function MigliorarePreconPage() {
-  return <GuidePage it={it} en={en} />;
+  return (
+    <main className="guide-page">
+      <h1>Migliorare un precon Commander</h1>
+
+      <p>
+        I mazzi precostruiti Commander sono pensati per essere giocati subito,
+        ma contengono quasi sempre qualche carta lenta o fuori tema. Questa
+        guida mostra come usare Precon Upgrade per spendere bene un budget di
+        upgrade, passo a passo.
+      </p>
+
+      <h2>1. Trova il tuo precon</h2>
+
+      <p>
+        Nella pagina di upgrade scrivi il nome del comandante: se esiste un
+        precon ufficiale con quel comandante, il sito propone la sua lista
+        ufficiale e puoi caricarla con un clic. Se hai già modificato il tuo
+        precon, incolla la tua lista: il confronto funziona uguale.
+      </p>
+
+      <p>
+        Non serve copiare la lista a mano: le intestazioni tipo «Creature»
+        vengono ignorate e puoi mantenere le virgole nei nomi delle carte. Se un
+        nome non viene riconosciuto, il sito te lo segnala: correggilo per un
+        confronto più preciso.
+      </p>
+
+      <p>
+        <a href="https://precon-upgrade.vercel.app/migliora">
+          Vai allo strumento di upgrade
+        </a>
+      </p>
+
+      <h2>2. Imposta budget e numero di cambi</h2>
+
+      <p>Due impostazioni guidano la selezione:</p>
+
+      <ul>
+        <li>
+          <strong>Budget in euro:</strong> quanto vuoi spendere in totale per le
+          nuove carte. Il filtro scarta le sostituzioni che lo superano.
+        </li>
+        <li>
+          <strong>Numero massimo di cambi:</strong> con 5–10 cambi correggi i
+          problemi principali; con 20 o più ricostruisci il mazzo in modo più
+          deciso.
+        </li>
+      </ul>
+
+      <p>
+        Un buon punto di partenza per un precon recente è 10 cambi con un budget
+        di 30–50 €: risolvi ramp, rimozioni e pescata senza stravolgere la
+        lista.
+      </p>
+
+      <h2>3. Leggi le sostituzioni</h2>
+
+      <p>
+        Ogni suggerimento mostra la carta da togliere e quella da aggiungere,
+        con immagini, prezzo stimato e statistiche. Le sostituzioni seguono in
+        genere tre direzioni ricorrenti nei precon:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Ramp e terre:</strong> i precon hanno spesso troppo poco
+          acceleratore; le rocce da 2 mana e le terre che entrano senza tuffarsi
+          sono i primi acquisti consigliati.
+        </li>
+        <li>
+          <strong>Rimozioni flessibili:</strong> i precon includono rimozioni
+          costose o limitate; le statistiche spingono verso rimozioni a basso
+          costo che gestiscono più tipi di minacce.
+        </li>
+        <li>
+          <strong>Pescata e motori:</strong> le carte che «si rimpiazzano da
+          sole» o pescano al verificarsi di condizioni del comandante alzano la
+          costanza del mazzo.
+        </li>
+      </ul>
+
+      <p>
+        Ricorda che gli abbinamenti sono automatici: prima di comprare,
+        controlla che la carta in entrata abbia davvero senso nel tuo piano di
+        gioco.
+      </p>
+
+      <h2>4. Applica i cambi con giudizio</h2>
+
+      <p>Non applicare tutti i suggerimenti in blocco. Un metodo semplice:</p>
+
+      <ul>
+        <li>
+          Parti dalle sostituzioni con inclusione e sinergia più alte: sono le
+          più collaudate dalla community.
+        </li>
+        <li>
+          Mantieni la curva di mana: se togli molte carte a basso costo,
+          controlla di non alzare troppo la media.
+        </li>
+        <li>
+          Conserva le carte che servono al piano del comandante, anche se poco
+          popolari: le statistiche premiano la popolarità, non la coerenza col
+          tuo tema.
+        </li>
+        <li>
+          Salva il risultato con un account per ritrovarlo in «I miei mazzi» e
+          confrontarlo dopo i prossimi cambi.
+        </li>
+      </ul>
+
+      <h2>Esempio pratico</h2>
+
+      <p>
+        Immagina di avere un precon Commander con una strategia chiara, ma con
+        poche fonti di accelerazione e poche rimozioni flessibili.
+      </p>
+
+      <p>
+        Il primo obiettivo non è aggiungere carte costose o famose. È capire
+        cosa manca al mazzo: se fatica a svilupparsi, possono servire fonti di
+        accelerazione; se perde contro minacce ricorrenti, possono servire
+        rimozioni più flessibili; se rimane senza opzioni nelle fasi avanzate,
+        possono servire fonti di pescata o motori di valore.
+      </p>
+
+      <p>
+        Dopo aver individuato il problema, usa il confronto per trovare carte da
+        aggiungere coerenti con la strategia e carte meno utili da rimuovere.
+        Non è necessario cambiare molte carte: a volte bastano pochi interventi
+        mirati per rendere il mazzo più costante e divertente da giocare.
+      </p>
+
+      <h2>Errori comuni</h2>
+
+      <p>
+        Un errore frequente è sostituire troppe carte contemporaneamente.
+        Cambiare 20 o 30 carte può rendere difficile capire cosa ha migliorato
+        il mazzo e cosa invece ha peggiorato la sua coerenza.
+      </p>
+
+      <p>
+        Un altro errore è scegliere una carta solo perché ha un’inclusione alta.
+        Una carta molto giocata può essere ottima in molti mazzi, ma non
+        necessariamente adatta al tuo comandante o alla tua strategia.
+      </p>
+
+      <p>
+        Non rimuovere carte poco popolari solo perché non compaiono spesso nelle
+        statistiche. Alcune carte sono essenziali per un piano di gioco
+        specifico, anche se non sono diffuse nei mazzi più comuni.
+      </p>
+
+      <p>
+        Infine, non dimenticare il budget. Un upgrade graduale permette di
+        testare i cambi, capire cosa funziona e evitare spese inutili.
+      </p>
+
+      <h2>Prima di acquistare</h2>
+
+      <p>Controlla sempre:</p>
+
+      <ul>
+        <li>
+          il prezzo reale del venditore: la stima usa la stampa più economica e
+          cambia con il mercato;
+        </li>
+        <li>
+          la legalità della carta in Commander nella pagina Ban;
+        </li>
+        <li>
+          che il totale delle nuove carte resti nel budget, spedizione esclusa.
+        </li>
+      </ul>
+
+      <h2>Dopo aver applicato i cambi</h2>
+
+      <p>
+        Dopo aver modificato il mazzo, non considerarlo subito completo. Gioca
+        alcune partite e verifica se il mazzo trova le risorse necessarie, riesce
+        a rispondere alle minacce e mantiene la propria strategia.
+      </p>
+
+      <p>
+        Se una modifica non funziona, puoi salvarla, testarla e modificarla in
+        seguito. Gli upgrade migliori arrivano spesso dopo qualche partita di
+        prova.
+      </p>
+
+      <p>
+        <a href="https://precon-upgrade.vercel.app/ban">
+          Elenco ban Commander
+        </a>
+      </p>
+
+      <p>
+        <a href="https://precon-upgrade.vercel.app/guida/come-funziona">
+          Come funziona il confronto
+        </a>
+      </p>
+    </main>
+  );
 }
