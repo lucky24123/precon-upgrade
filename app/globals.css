@@ -294,19 +294,19 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 /* Upgrade spotlight */
 .upgrade-spotlight {
-  margin-top: 32px;
-  padding: 24px;
-  border-radius: 20px;
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #170b22, #2b1230);
   color: #fff;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
 }
 
 .upgrade-spotlight-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 18px;
 }
 
 .upgrade-spotlight-text {
@@ -314,63 +314,57 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 
 .upgrade-spotlight-text h2 {
-  margin: 0 0 6px;
-  font-size: 12px;
+  margin: 0 0 5px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #d9a441;
 }
 
 .upgrade-spotlight-text h3 {
-  margin: 0 0 10px;
-  font-size: 26px;
+  margin: 0 0 8px;
+  font-size: 22px;
   line-height: 1.1;
 }
 
 .upgrade-spotlight-text p {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   color: #e7d9f2;
-  line-height: 1.5;
-  font-size: 15px;
+  line-height: 1.45;
+  font-size: 14px;
 }
 
 .upgrade-spotlight-button {
   display: inline-block;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 999px;
   background: #d9a441;
   color: #1b0f26;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.upgrade-spotlight-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(217, 164, 65, 0.25);
 }
 
 .upgrade-spotlight-card {
-  flex: 0 0 170px;
-  width: 170px;
-  height: 238px;
-  border-radius: 12px;
+  flex: 0 0 110px;
+  width: 110px;
+  aspect-ratio: 5 / 7;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
 }
 
 .upgrade-spotlight-card img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
 @media (max-width: 760px) {
   .upgrade-spotlight {
-    padding: 20px;
+    padding: 16px;
   }
 
   .upgrade-spotlight-inner {
@@ -380,7 +374,6 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 
   .upgrade-spotlight-card {
     flex: 0 0 auto;
-    width: 150px;
-    height: 210px;
+    width: 100px;
   }
 }
