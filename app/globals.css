@@ -304,21 +304,21 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 /* Upgrade spotlight */
 .upgrade-spotlight {
-  margin-top: 28px;
-  padding: 22px;
-  border-radius: 18px;
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #170b22, #2b1230);
   color: #fff;
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
 }
 
 .upgrade-spotlight-head {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .upgrade-spotlight-head h2 {
-  margin: 0 0 6px;
-  font-size: 13px;
+  margin: 0 0 4px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #d9a441;
@@ -327,74 +327,67 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 .upgrade-spotlight-head p {
   margin: 0;
   color: #e7d9f2;
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .upgrade-spotlight-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 14px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .upgrade-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  flex: 0 0 70px;
+  width: 70px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.upgrade-card:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.12);
 }
 
 .upgrade-card img {
   display: block;
-  width: 100%;
-  aspect-ratio: 5 / 7;
+  width: 70px;
+  height: 98px;
   object-fit: contain;
   object-position: center;
-  border-radius: 6px;
+  border-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-card-info {
+  margin-top: 5px;
 }
 
 .upgrade-card-info h3 {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.2;
+  font-size: 10px;
+  line-height: 1.15;
+  color: #fff;
 }
 
 .upgrade-card-info p {
-  margin: 0;
-  font-size: 11px;
+  margin: 2px 0 0;
+  font-size: 9px;
   color: #c9b6dd;
 }
 
 .upgrade-card-info span {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #d9a441;
-}
-
-@media (max-width: 900px) {
-  .upgrade-spotlight-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  display: none;
 }
 
 @media (max-width: 600px) {
   .upgrade-spotlight {
-    padding: 16px;
+    padding: 14px;
   }
 
-  .upgrade-spotlight-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .upgrade-card {
+    flex: 0 0 60px;
+    width: 60px;
+  }
+
+  .upgrade-card img {
+    width: 60px;
+    height: 84px;
   }
 }
