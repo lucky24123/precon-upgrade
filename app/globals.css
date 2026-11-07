@@ -292,3 +292,88 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
   margin:0;
   padding:0;
 }
+/* Upgrade spotlight */
+.upgrade-spotlight {
+  margin-top: 40px;
+  padding: 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #170b22, #2b1230);
+  color: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.upgrade-spotlight-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.upgrade-spotlight-text {
+  max-width: 560px;
+}
+
+.upgrade-spotlight-text h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #d9a441;
+}
+
+.upgrade-spotlight-text h3 {
+  margin: 0 0 14px;
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.upgrade-spotlight-text p {
+  margin: 0 0 22px;
+  color: #e7d9f2;
+  line-height: 1.6;
+}
+
+.upgrade-spotlight-button {
+  display: inline-block;
+  padding: 13px 26px;
+  border-radius: 999px;
+  background: #d9a441;
+  color: #1b0f26;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upgrade-spotlight-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(217, 164, 65, 0.28);
+}
+
+.upgrade-spotlight-card {
+  flex: 0 0 250px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+}
+
+.upgrade-spotlight-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 760px) {
+  .upgrade-spotlight {
+    padding: 24px;
+  }
+
+  .upgrade-spotlight-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .upgrade-spotlight-card {
+    flex: 0 0 auto;
+    width: 230px;
+  }
+}
