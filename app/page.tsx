@@ -4,8 +4,11 @@ import { useLang, LangSwitch } from "../lib/i18n";
 import AuthButton from "../components/AuthButton";
 import InstagramLink from "../components/InstagramLink";
 import CommanderCarousel from "../components/CommanderCarousel";
+import UpgradeSpotlight from "../components/UpgradeSpotlight";
+
 export default function Landing() {
   const { t } = useLang();
+
   return (
     <main className="landing">
       {/* Hero senza foto mazzo/dadi — solo sfondo design */}
@@ -15,6 +18,7 @@ export default function Landing() {
             <Link href="/" className="brand">
               PRECON UPGRADE <span>NO AI</span>
             </Link>
+
             <div className="headright">
               <AuthButton />
               <LangSwitch />
@@ -24,23 +28,29 @@ export default function Landing() {
 
           <div className="land-copy land-copy-clean">
             <p className="land-kicker">{t.landKicker}</p>
+
             <h1>
               {t.landTitle1}
               <br />
               <i>{t.landTitle2}</i>
             </h1>
+
             <p className="land-text">{t.landText}</p>
+
             <div className="land-ctas">
               <Link href="/migliora" className="cta primary btn-tap">
                 {t.landCtaUpgrade}
               </Link>
-             <Link href="/crea-mazzo" className="cta ghost btn-tap">
+
+              <Link href="/crea-mazzo" className="cta ghost btn-tap">
                 {t.landCtaBuild}
               </Link>
             </div>
           </div>
 
           <CommanderCarousel />
+
+          <UpgradeSpotlight />
         </div>
       </section>
 
@@ -49,14 +59,17 @@ export default function Landing() {
           <h2>{t.landF1t}</h2>
           <p>{t.landF1}</p>
         </Link>
+
         <Link href="/crea-mazzo" className="feature card-foil">
           <h2>{t.landF2t}</h2>
           <p>{t.landF2}</p>
         </Link>
+
         <Link href="/crea-mazzo" className="feature card-foil">
           <h2>{t.landF3t}</h2>
           <p>{t.landF3}</p>
         </Link>
+
         <Link href="/guida/come-funziona" className="feature card-foil">
           <h2>{t.landF4t}</h2>
           <p>{t.landF4}</p>
