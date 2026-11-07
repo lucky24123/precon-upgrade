@@ -304,21 +304,21 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 /* Upgrade spotlight */
 .upgrade-spotlight {
-  margin-top: 24px;
-  padding: 16px;
-  border-radius: 16px;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #170b22, #2b1230);
   color: #fff;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
 }
 
 .upgrade-spotlight-head {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .upgrade-spotlight-head h2 {
-  margin: 0 0 4px;
-  font-size: 11px;
+  margin: 0 0 3px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #d9a441;
@@ -327,48 +327,48 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 .upgrade-spotlight-head p {
   margin: 0;
   color: #e7d9f2;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .upgrade-spotlight-grid {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 3px;
 }
 
 .upgrade-card {
-  flex: 0 0 70px;
-  width: 70px;
+  flex: 0 0 50px;
+  width: 50px;
   text-decoration: none;
   color: inherit;
 }
 
 .upgrade-card img {
   display: block;
-  width: 70px;
-  height: 98px;
+  width: 50px;
+  height: 70px;
   object-fit: contain;
   object-position: center;
-  border-radius: 4px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .upgrade-card-info {
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .upgrade-card-info h3 {
   margin: 0;
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 8px;
+  line-height: 1.1;
   color: #fff;
 }
 
 .upgrade-card-info p {
-  margin: 2px 0 0;
-  font-size: 9px;
+  margin: 1px 0 0;
+  font-size: 7px;
   color: #c9b6dd;
 }
 
@@ -378,16 +378,16 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 
 @media (max-width: 600px) {
   .upgrade-spotlight {
-    padding: 14px;
+    padding: 12px;
   }
 
   .upgrade-card {
-    flex: 0 0 60px;
-    width: 60px;
+    flex: 0 0 44px;
+    width: 44px;
   }
 
   .upgrade-card img {
-    width: 60px;
-    height: 84px;
+    width: 44px;
+    height: 62px;
   }
 }
