@@ -303,7 +303,7 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 }
 
 .upgrade-spotlight-head {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .upgrade-spotlight-head h2 {
@@ -323,15 +323,14 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
 
 .upgrade-spotlight-grid {
   display: flex;
-  gap: 18px;
-  overflow-x: auto;
-  padding-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .upgrade-card {
-  flex: 0 0 130px;
-  width: 130px;
-  padding: 10px;
+  flex: 1 1 180px;
+  max-width: 240px;
+  padding: 14px 16px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.07);
   text-decoration: none;
@@ -344,56 +343,34 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
   background: rgba(255, 255, 255, 0.13);
 }
 
-.upgrade-card img {
-  display: block;
-  width: 110px;
-  height: 154px;
-  margin: 0 auto;
-  object-fit: contain;
-  object-position: center;
-  border-radius: 6px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
-}
-
-.upgrade-card-info {
-  margin-top: 10px;
-  text-align: center;
-}
-
 .upgrade-card-info h3 {
   margin: 0;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.2;
   color: #fff;
 }
 
 .upgrade-card-info p {
-  margin: 4px 0 0;
-  font-size: 11px;
+  margin: 5px 0 0;
+  font-size: 12px;
   color: #c9b6dd;
 }
 
 .upgrade-card-info span {
-  display: none;
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #d9a441;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 600px) {
   .upgrade-spotlight {
     padding: 16px;
   }
 
-  .upgrade-spotlight-grid {
-    gap: 14px;
-  }
-
   .upgrade-card {
-    flex: 0 0 115px;
-    width: 115px;
-    padding: 8px;
-  }
-
-  .upgrade-card img {
-    width: 95px;
-    height: 133px;
+    flex: 1 1 100%;
+    max-width: none;
   }
 }
