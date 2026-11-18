@@ -3,22 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type Precon = {
-  name: string;
-  set: string;
-  year: string;
-  commanders: string[];
-  list: string;
-};
-
-type Card = {
-  name: string;
-  quantity: number;
-  counters: number;
-  image: string | null;
-};
-
-function parseDeckList(list: string): Card[] {
+function parseDeckList(list) {
   return list
     .split("\n")
     .map(line => line.trim())
@@ -44,7 +29,7 @@ function parseDeckList(list: string): Card[] {
     });
 }
 
-function getScryfallImage(name: string) {
+function getScryfallImage(name) {
   return `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(
     name
   )}&format=image&version=small`;
@@ -52,11 +37,11 @@ function getScryfallImage(name: string) {
 
 export default function Contapunti() {
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState<Precon[]>([]);
-  const [selected, setSelected] = useState<Precon | null>(null);
-  const [cards, setCards] = useState<Card[]>([]);
+  const [results, setResults] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [cards, setCards] = useState([]);
   const [playerCount, setPlayerCount] = useState(4);
-  const [life, setLife] = useState<number[]>([40, 40, 40, 40]);
+  const [life, setLife] = useState([40, 40, 40, 40]);
   const [diceResult, setDiceResult] = useState(
     "Premi “Lancia i dadi” per decidere chi inizia."
   );
@@ -82,8 +67,7 @@ export default function Contapunti() {
 
         const data = await response.json();
 
-        const found: Precon[] =
-          data && Array.isArray(data.decks) ? data.decks : [];
+        const found = data && Array.isArray(data.decks) ? data.decks : [];
 
         setResults(found);
       } catch (error) {
@@ -95,10 +79,10 @@ export default function Contapunti() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  function openPrecon(precon: Precon) {
+  function openPrecon(precon) {
     const commanderName = precon.commanders[0] || "Comandante";
 
-    const commanderCard: Card = {
+    const commanderCard = {
       name: commanderName,
       quantity: 1,
       counters: 0,
@@ -115,13 +99,13 @@ export default function Contapunti() {
     setResults([]);
   }
 
-  function addCounter(index: number) {
+  function addCounter(index) {
     const newCards = [...cards];
     newCards[index].counters++;
     setCards(newCards);
   }
 
-  function removeCounter(index: number) {
+  function removeCounter(index) {
     const newCards = [...cards];
 
     if (newCards[index].counters > 0) {
@@ -140,7 +124,7 @@ export default function Contapunti() {
     );
   }
 
-  function changePlayerCount(value: string) {
+  function changePlayerCount(value) {
     const count = Number(value);
 
     setPlayerCount(count);
@@ -148,13 +132,13 @@ export default function Contapunti() {
     setDiceResult("Premi “Lancia i dadi” per decidere chi inizia.");
   }
 
-  function changeLife(index: number, amount: number) {
+  function changeLife(index, amount) {
     const newLife = [...life];
     newLife[index] += amount;
     setLife(newLife);
   }
 
-  function resetOneLife(index: number) {
+  function resetOneLife(index) {
     const newLife = [...life];
     newLife[index] = 40;
     setLife(newLife);
