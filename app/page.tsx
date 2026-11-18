@@ -45,6 +45,10 @@ export default function Landing() {
               <Link href="/crea-mazzo" className="cta ghost btn-tap">
                 {t.landCtaBuild}
               </Link>
+
+              <Link href="/contapunti" className="cta primary btn-tap">
+                🎲 Contapunti Commander
+              </Link>
             </div>
           </div>
 
@@ -73,6 +77,14 @@ export default function Landing() {
         <Link href="/guida/come-funziona" className="feature card-foil">
           <h2>{t.landF4t}</h2>
           <p>{t.landF4}</p>
+        </Link>
+
+        <Link href="/contapunti" className="feature card-foil">
+          <h2>Contapunti Commander</h2>
+          <p>
+            Scrivi il comandante, apri il precon, tocca le carte e aggiungi
+            i segnalini +1/+1. Gestisci anche le vite e chi inizia.
+          </p>
         </Link>
       </section>
 
