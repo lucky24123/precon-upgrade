@@ -374,3 +374,110 @@ footer{text-align:center;font-size:11px;color:#52527A;padding:24px}
     max-width: none;
   }
 }
+.contapunti .results {
+  margin-top: 12px;
+}
+
+.contapunti .result {
+  background: #22222a;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.contapunti .result:hover {
+  background: #2c2c36;
+}
+
+.contapunti .result strong {
+  color: #ffd54a;
+}
+
+.contapunti .precon-box {
+  margin-top: 20px;
+}
+
+.contapunti .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.contapunti .card {
+  background: #22222a;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.contapunti .card:active {
+  transform: scale(0.97);
+}
+
+.contapunti .card img {
+  width: 100%;
+  border-radius: 8px;
+  display: block;
+}
+
+.contapunti .card-name {
+  font-weight: bold;
+  font-size: 13px;
+  margin: 8px 0 4px;
+  min-height: 34px;
+}
+
+.contapunti .quantity {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.contapunti .counter {
+  color: #ffd54a;
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 6px;
+}
+
+.contapunti .card-note {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+.contapunti .players {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.contapunti .player {
+  background: #22222a;
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+
+.contapunti .life {
+  font-size: 46px;
+  font-weight: bold;
+  color: #ffd54a;
+  margin: 8px 0;
+}
+
+.contapunti .dice-result {
+  font-size: 20px;
+  color: #4fc3f7;
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.contapunti .center {
+  text-align: center;
+}
