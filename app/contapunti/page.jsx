@@ -4,10 +4,12 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import preconCatalog from "../../lib/precons.json";
 
-function getScryfallImage(name) {
-  return `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(
+function getScryfallImage(name, setCode) {
+  const set = setCode ? `&set=${encodeURIComponent(setCode)}` : "";
+
+  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(
     name
-  )}&format=image&version=small`;
+  )}${set}&format=image&version=small`;
 }
 
 function getDecks() {
