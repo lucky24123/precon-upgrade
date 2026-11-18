@@ -50,34 +50,34 @@ export default function Contapunti() {
       name: commanderName,
       quantity: 1,
       counters: 0,
-      image: getScryfallImage(commanderName)
+      image: getScryfallImage(commanderName, deck.code)
     };
 
     const deckCards = deck.cards.map(([name, quantity]) => ({
       name,
       quantity: quantity || 1,
       counters: 0,
-      image: getScryfallImage(name)
+  image: getScryfallImage(name, deck.code)
     }));
 
     setSelected(deck);
     setCards([commanderCard, ...deckCards]);
   }
 
-  function changePrecon(event) {
-    const deckId = event.target.value;
+function changePrecon(event) {
+  const deckIndex = Number(event.target.value);
 
-    setSelectedDeckId(deckId);
+  setSelectedDeckId(deckId);
 
-    const deck = decks.find((item) => String(item.code) === deckId);
+  const deck = decks[deckIndex];
 
-    if (deck) {
-      openPrecon(deck);
-    } else {
-      setSelected(null);
-      setCards([]);
-    }
+  if (deck) {
+    openPrecon(deck);
+  } else {
+    setSelected(null);
+    setCards([]);
   }
+}
 
   function addCounter(index) {
     setCards((currentCards) =>
@@ -187,23 +187,23 @@ export default function Contapunti() {
 
         <label>Precon</label>
 
-        <select
-          value={selectedDeckId}
-          onChange={changePrecon}
-        >
-          <option value="">
-            Scegli un precon…
-          </option>
+   <select
+  value={selectedDeckId}
+  onChange={changePrecon}
+>
+  <option value="">
+    Scegli un precon…
+  </option>
 
-          {decks.map((deck) => (
-            <option
-              key={deck.code || deck.name}
-              value={deck.code || deck.name}
-            >
-              {deck.name} — {deck.commanders?.[0] || "Comandante"}
-            </option>
-          ))}
-        </select>
+  {decks.map((deck, index) => (
+    <option
+      key={`${deck.code || "deck"}-${index}`}
+      value={index}
+    >
+      {deck.name} — {deck.commanders?.[0] || "Comandante"}
+    </option>
+  ))}
+</select>
 
         {selected && (
           <div className="precon-box">
