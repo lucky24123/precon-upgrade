@@ -4,12 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import preconCatalog from "../../lib/precons.json";
 
-function getScryfallImage(name, setCode) {
-  const set = setCode ? `&set=${encodeURIComponent(setCode)}` : "";
-
-  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(
+function getScryfallImage(name) {
+  return `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(
     name
-  )}${set}&format=image&version=small`;
+  )}&format=image&version=small`;
 }
 
 function getDecks() {
@@ -34,7 +32,7 @@ function getDecks() {
 export default function Contapunti() {
   const decks = useMemo(() => getDecks(), []);
 
-  const [selectedDeckId, setSelectedDeckId] = useState("");
+  const [selectedDeckIndex, setSelectedDeckIndex] = useState("");
   const [selected, setSelected] = useState(null);
   const [cards, setCards] = useState([]);
   const [playerCount, setPlayerCount] = useState(4);
@@ -50,34 +48,40 @@ export default function Contapunti() {
       name: commanderName,
       quantity: 1,
       counters: 0,
-      image: getScryfallImage(commanderName, deck.code)
+      image: getScryfallImage(commanderName)
     };
 
     const deckCards = deck.cards.map(([name, quantity]) => ({
       name,
       quantity: quantity || 1,
       counters: 0,
-  image: getScryfallImage(name, deck.code)
+      image: getScryfallImage(name)
     }));
 
     setSelected(deck);
     setCards([commanderCard, ...deckCards]);
   }
 
-function changePrecon(event) {
-  const deckIndex = Number(event.target.value);
+  function changePrecon(event) {
+    const deckIndex = event.target.value;
 
-  setSelectedDeckId(deckId);
+    setSelectedDeckIndex(deckIndex);
 
-  const deck = decks[deckIndex];
+    if (deckIndex === "") {
+      setSelected(null);
+      setCards([]);
+      return;
+    }
 
-  if (deck) {
-    openPrecon(deck);
-  } else {
-    setSelected(null);
-    setCards([]);
+    const deck = decks[Number(deckIndex)];
+
+    if (deck) {
+      openPrecon(deck);
+    } else {
+      setSelected(null);
+      setCards([]);
+    }
   }
-}
 
   function addCounter(index) {
     setCards((currentCards) =>
@@ -187,23 +191,23 @@ function changePrecon(event) {
 
         <label>Precon</label>
 
-   <select
-  value={selectedDeckId}
-  onChange={changePrecon}
->
-  <option value="">
-    Scegli un precon…
-  </option>
+        <select
+          value={selectedDeckIndex}
+          onChange={changePrecon}
+        >
+          <option value="">
+            Scegli un precon…
+          </option>
 
-  {decks.map((deck, index) => (
-    <option
-      key={`${deck.code || "deck"}-${index}`}
-      value={index}
-    >
-      {deck.name} — {deck.commanders?.[0] || "Comandante"}
-    </option>
-  ))}
-</select>
+          {decks.map((deck, index) => (
+            <option
+              key={`${deck.code || "deck"}-${index}`}
+              value={index}
+            >
+              {deck.name} — {deck.commanders?.[0] || "Comandante"}
+            </option>
+          ))}
+        </select>
 
         {selected && (
           <div className="precon-box">
