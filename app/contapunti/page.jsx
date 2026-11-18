@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import preconCatalog from "../lib/precons.json";
+import preconCatalog from "../../lib/precons.json";
 
 function getScryfallImage(name) {
   return `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(
