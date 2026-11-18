@@ -33,4 +33,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add lib/precons.json
           git commit -m "Aggiornamento automatico precon Commander" || exit 0
-          git push
+          git pull --rebase origin main
+          git push origin main
