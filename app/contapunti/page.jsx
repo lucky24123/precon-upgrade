@@ -1,33 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-
-function parseDeckList(list) {
-  return list
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
-    .map(line => {
-      const match = line.match(/^(\d+)\s+x?\s+(.+)$/i);
-
-      if (match) {
-        return {
-          quantity: Number(match[1]),
-          name: match[2].trim(),
-          counters: 0,
-          image: null
-        };
-      }
-
-      return {
-        quantity: 1,
-        name: line,
-        counters: 0,
-        image: null
-      };
-    });
-}
+import preconCatalog from "../lib/precons.json";
 
 function getScryfallImage(name) {
   return `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(
@@ -35,9 +10,29 @@ function getScryfallImage(name) {
   )}&format=image&version=small`;
 }
 
+function getDecks() {
+  const decks = Array.isArray(preconCatalog?.decks)
+    ? preconCatalog.decks
+    : [];
+
+  return decks
+    .filter((deck) => deck && Array.isArray(deck.cards))
+    .sort((a, b) => {
+      const dateA = a.date || "";
+      const dateB = b.date || "";
+
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA);
+      }
+
+      return (a.name || "").localeCompare(b.name || "");
+    });
+}
+
 export default function Contapunti() {
-  const [search, setSearch] = useState("");
-  const [results, setResults] = useState([]);
+  const decks = useMemo(() => getDecks(), []);
+
+  const [selectedDeckId, setSelectedDeckId] = useState("");
   const [selected, setSelected] = useState(null);
   const [cards, setCards] = useState([]);
   const [playerCount, setPlayerCount] = useState(4);
@@ -46,41 +41,8 @@ export default function Contapunti() {
     "Premi “Lancia i dadi” per decidere chi inizia."
   );
 
-  useEffect(() => {
-    const value = search.trim();
-
-    if (value.length < 3) {
-      setResults([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      try {
-        const response = await fetch(
-          `/api/precon?commander=${encodeURIComponent(value)}`
-        );
-
-        if (!response.ok) {
-          setResults([]);
-          return;
-        }
-
-        const data = await response.json();
-
-        const found = data && Array.isArray(data.decks) ? data.decks : [];
-
-        setResults(found);
-      } catch (error) {
-        console.error(error);
-        setResults([]);
-      }
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  function openPrecon(precon) {
-    const commanderName = precon.commanders[0] || "Comandante";
+  function openPrecon(deck) {
+    const commanderName = deck.commanders?.[0] || "Comandante";
 
     const commanderCard = {
       name: commanderName,
@@ -89,35 +51,55 @@ export default function Contapunti() {
       image: getScryfallImage(commanderName)
     };
 
-    const deckCards = parseDeckList(precon.list).map(card => ({
-      ...card,
-      image: getScryfallImage(card.name)
+    const deckCards = deck.cards.map(([name, quantity]) => ({
+      name,
+      quantity: quantity || 1,
+      counters: 0,
+      image: getScryfallImage(name)
     }));
 
-    setSelected(precon);
+    setSelected(deck);
     setCards([commanderCard, ...deckCards]);
-    setResults([]);
+  }
+
+  function changePrecon(event) {
+    const deckId = event.target.value;
+
+    setSelectedDeckId(deckId);
+
+    const deck = decks.find((item) => String(item.code) === deckId);
+
+    if (deck) {
+      openPrecon(deck);
+    } else {
+      setSelected(null);
+      setCards([]);
+    }
   }
 
   function addCounter(index) {
-    const newCards = [...cards];
-    newCards[index].counters++;
-    setCards(newCards);
+    setCards((currentCards) =>
+      currentCards.map((card, cardIndex) =>
+        cardIndex === index
+          ? { ...card, counters: card.counters + 1 }
+          : card
+      )
+    );
   }
 
   function removeCounter(index) {
-    const newCards = [...cards];
-
-    if (newCards[index].counters > 0) {
-      newCards[index].counters--;
-    }
-
-    setCards(newCards);
+    setCards((currentCards) =>
+      currentCards.map((card, cardIndex) =>
+        cardIndex === index && card.counters > 0
+          ? { ...card, counters: card.counters - 1 }
+          : card
+      )
+    );
   }
 
   function resetCounters() {
-    setCards(
-      cards.map(card => ({
+    setCards((currentCards) =>
+      currentCards.map((card) => ({
         ...card,
         counters: 0
       }))
@@ -133,15 +115,19 @@ export default function Contapunti() {
   }
 
   function changeLife(index, amount) {
-    const newLife = [...life];
-    newLife[index] += amount;
-    setLife(newLife);
+    setLife((currentLife) =>
+      currentLife.map((points, lifeIndex) =>
+        lifeIndex === index ? points + amount : points
+      )
+    );
   }
 
   function resetOneLife(index) {
-    const newLife = [...life];
-    newLife[index] = 40;
-    setLife(newLife);
+    setLife((currentLife) =>
+      currentLife.map((points, lifeIndex) =>
+        lifeIndex === index ? 40 : points
+      )
+    );
   }
 
   function resetLife() {
@@ -158,7 +144,7 @@ export default function Contapunti() {
 
     const winners = rolls
       .map((value, index) => ({ value, index }))
-      .filter(player => player.value === highest);
+      .filter((player) => player.value === highest);
 
     const text = rolls
       .map((value, index) => `G${index + 1}: ${value}`)
@@ -174,9 +160,9 @@ export default function Contapunti() {
   return (
     <main className="shell contapunti">
       <header>
-        <a href="/" className="brand">
+        <Link href="/" className="brand">
           PRECON UPGRADE <span>NO AI</span>
-        </a>
+        </Link>
 
         <div className="headright">
           <p>Contapunti Commander</p>
@@ -184,51 +170,47 @@ export default function Contapunti() {
       </header>
 
       <nav className="links">
-        <a href="/migliora">Migliora</a>
-        <a href="/crea-mazzo">Crea mazzo</a>
-        <a href="/contapunti">Contapunti</a>
+        <Link href="/migliora">Migliora</Link>
+        <Link href="/crea-mazzo">Crea mazzo</Link>
+        <Link href="/contapunti">Contapunti</Link>
       </nav>
 
       <section className="panel">
         <h1>Contapunti Commander</h1>
 
         <p>
-          Scrivi il comandante per trovare il precon e vedere la lista completa.
+          Scegli il precon dal menu e apri la lista completa per contare i
+          segnalini +1/+1.
         </p>
 
-        <label>Comandante</label>
+        <label>Precon</label>
 
-        <input
-          value={search}
-          onChange={event => setSearch(event.target.value)}
-          placeholder="Esempio: Admiral Beckett Brass"
-          autoComplete="off"
-        />
+        <select
+          value={selectedDeckId}
+          onChange={changePrecon}
+        >
+          <option value="">
+            Scegli un precon…
+          </option>
 
-        <div className="results">
-          {results.map((precon, index) => (
-            <div
-              key={`${precon.name}-${index}`}
-              className="result"
-              onClick={() => openPrecon(precon)}
+          {decks.map((deck) => (
+            <option
+              key={deck.code || deck.name}
+              value={deck.code || deck.name}
             >
-              <strong>{precon.name}</strong>
-              <br />
-              Comandante: {precon.commanders.join(", ")}
-              <br />
-              {precon.set} {precon.year}
-            </div>
+              {deck.name} — {deck.commanders?.[0] || "Comandante"}
+            </option>
           ))}
-        </div>
+        </select>
 
         {selected && (
           <div className="precon-box">
             <h2>{selected.name}</h2>
 
             <p>
-              Comandante: {selected.commanders.join(", ")}
+              Comandante: {selected.commanders?.join(", ") || "Comandante"}
               <br />
-              {selected.set} {selected.year}
+              Uscita: {selected.date || "Non disponibile"}
             </p>
 
             <div className="cards">
@@ -243,7 +225,7 @@ export default function Contapunti() {
                       src={card.image}
                       alt={card.name}
                       loading="lazy"
-                      onError={event => {
+                      onError={(event) => {
                         event.currentTarget.style.display = "none";
                       }}
                     />
@@ -257,7 +239,7 @@ export default function Contapunti() {
 
                   <div
                     className="counter"
-                    onClick={event => {
+                    onClick={(event) => {
                       event.stopPropagation();
                       removeCounter(index);
                     }}
@@ -287,7 +269,7 @@ export default function Contapunti() {
 
           <select
             value={playerCount}
-            onChange={event => changePlayerCount(event.target.value)}
+            onChange={(event) => changePlayerCount(event.target.value)}
           >
             <option value="2">2</option>
             <option value="3">3</option>
